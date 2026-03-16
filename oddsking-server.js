@@ -81,7 +81,7 @@ app.post('/telegram-webhook', (req, res) => {
 // ══════════════════════════════════════
 // BOT COMMAND HANDLERS
 // ══════════════════════════════════════
-setupCommandHandlers();
+// handlers called inside start()
 
 function setupCommandHandlers() {
 
@@ -794,6 +794,10 @@ async function start() {
     } else {
         console.warn('⚠️ SUPER_ADMIN_CHAT_ID not set — super admin not configured!');
     }
+
+    // Setup handlers AFTER super admin is in memory
+    setupCommandHandlers();
+    console.log('✅ Command handlers registered!');
 
     // Start server first
     await new Promise((resolve, reject) => {
