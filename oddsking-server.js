@@ -11,18 +11,18 @@ app.use(express.static(__dirname));
 // ENV CHECK — runs before anything else
 // ══════════════════════════════════════
 console.log('\n=== ENV CHECK ===');
-console.log('BOT_TOKEN:    ', process.env.BOT_TOKEN    ? '✅ SET (' + process.env.BOT_TOKEN.substring(0,10) + '...)' : '❌ MISSING');
-console.log('ADMIN_CHAT_ID:', process.env.ADMIN_CHAT_ID ? '✅ SET (' + process.env.ADMIN_CHAT_ID + ')'              : '❌ MISSING');
+console.log('BOT_TOKEN:    ', process.env.SUPER_ADMIN_BOT_TOKEN    ? '✅ SET (' + process.env.SUPER_ADMIN_BOT_TOKEN.substring(0,10) + '...)' : '❌ MISSING');
+console.log('ADMIN_CHAT_ID:', process.env.SUPER_ADMIN_CHAT_ID ? '✅ SET (' + process.env.SUPER_ADMIN_CHAT_ID + ')'              : '❌ MISSING');
 console.log('PORT:         ', process.env.PORT          ? '✅ ' + process.env.PORT                                  : '⚠️  using 3000');
 console.log('WEBHOOK_URL:  ', process.env.RENDER_EXTERNAL_URL || process.env.APP_URL || 'http://localhost:3000');
 console.log('=================\n');
 
-if (!process.env.BOT_TOKEN) {
+if (!process.env.SUPER_ADMIN_BOT_TOKEN) {
     console.error('❌ FATAL: BOT_TOKEN not set!');
     console.error('Go to Render → Your Service → Environment → Add BOT_TOKEN');
     process.exit(1);
 }
-if (!process.env.ADMIN_CHAT_ID) {
+if (!process.env.SUPER_ADMIN_CHAT_ID) {
     console.error('❌ FATAL: ADMIN_CHAT_ID not set!');
     console.error('Go to Render → Your Service → Environment → Add ADMIN_CHAT_ID');
     process.exit(1);
@@ -31,10 +31,10 @@ if (!process.env.ADMIN_CHAT_ID) {
 // ══════════════════════════════════════
 // CONFIG
 // ══════════════════════════════════════
-const BOT_TOKEN   = process.env.BOT_TOKEN;
+const BOT_TOKEN   = process.env.SUPER_ADMIN_BOT_TOKEN;
 const PORT        = process.env.PORT || 3000;
 const WEBHOOK_URL = process.env.RENDER_EXTERNAL_URL || process.env.APP_URL || `http://localhost:${PORT}`;
-const ADMIN_CHAT  = process.env.ADMIN_CHAT_ID;
+const ADMIN_CHAT  = process.env.SUPER_ADMIN_CHAT_ID;
 
 // ══════════════════════════════════════
 // BOT — created AFTER env check passes
