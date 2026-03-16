@@ -1,0 +1,1007 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OddsKing Pro 👑 — Win Every Day</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green:       #1a7a3c;
+    --green-light: #25a352;
+    --green-pale:  #e8f5ee;
+    --green-glow:  #2ecc71;
+    --gold:        #f0b429;
+    --gold-dark:   #c98a00;
+    --white:       #ffffff;
+    --off-white:   #f7faf8;
+    --gray-light:  #eaf2ed;
+    --gray:        #8a9e91;
+    --dark:        #0d1f14;
+    --text:        #1a2e20;
+    --text-soft:   #4a6354;
+    --red:         #e53935;
+    --shadow:      0 4px 24px rgba(26,122,60,0.10);
+    --shadow-lg:   0 8px 40px rgba(26,122,60,0.18);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Outfit', sans-serif;
+    background: var(--off-white);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: var(--white);
+    border-bottom: 3px solid var(--green);
+    position: sticky; top: 0; z-index: 100;
+    box-shadow: var(--shadow);
+  }
+  .header-inner {
+    max-width: 1100px; margin: 0 auto;
+    padding: 0 20px;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 68px;
+  }
+  .logo {
+    display: flex; align-items: center; gap: 10px;
+    text-decoration: none;
+  }
+  .logo-crown { font-size: 28px; line-height: 1; }
+  .logo-text {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px; letter-spacing: 2px;
+    color: var(--green);
+    line-height: 1;
+  }
+  .logo-text span { color: var(--gold); }
+  .logo-tagline {
+    font-size: 10px; font-weight: 500; color: var(--gray);
+    letter-spacing: 1.5px; text-transform: uppercase;
+    display: block; margin-top: -2px;
+  }
+  .header-live {
+    display: flex; align-items: center; gap: 8px;
+    background: var(--green-pale);
+    border: 1.5px solid var(--green-light);
+    border-radius: 20px; padding: 5px 14px;
+    font-size: 12px; font-weight: 600; color: var(--green);
+    letter-spacing: 0.5px;
+  }
+  .pulse {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--green-glow);
+    animation: pulse 1.5s infinite;
+  }
+  @keyframes pulse {
+    0%,100% { opacity: 1; transform: scale(1); }
+    50%      { opacity: 0.5; transform: scale(1.3); }
+  }
+
+  /* ── HERO ── */
+  .hero {
+    background: linear-gradient(135deg, var(--dark) 0%, #1a4d2a 50%, var(--green) 100%);
+    color: white; text-align: center;
+    padding: 60px 20px 50px;
+    position: relative; overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Ccircle cx='30' cy='30' r='28'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    pointer-events: none;
+  }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(240,180,41,0.15);
+    border: 1.5px solid rgba(240,180,41,0.4);
+    border-radius: 20px; padding: 5px 16px;
+    font-size: 12px; font-weight: 600; color: var(--gold);
+    letter-spacing: 1px; text-transform: uppercase;
+    margin-bottom: 18px;
+    animation: fadeDown 0.6s ease both;
+  }
+  .hero h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(48px, 10vw, 88px);
+    letter-spacing: 4px; line-height: 1;
+    animation: fadeDown 0.7s ease both;
+  }
+  .hero h1 span { color: var(--gold); }
+  .hero p {
+    font-size: 16px; font-weight: 400;
+    color: rgba(255,255,255,0.75);
+    margin: 14px 0 32px;
+    animation: fadeDown 0.8s ease both;
+  }
+  .hero-stats {
+    display: flex; justify-content: center; gap: 40px;
+    animation: fadeDown 0.9s ease both;
+  }
+  .hero-stat { text-align: center; }
+  .hero-stat-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 36px; color: var(--gold); line-height: 1;
+  }
+  .hero-stat-label {
+    font-size: 11px; color: rgba(255,255,255,0.6);
+    text-transform: uppercase; letter-spacing: 1px; margin-top: 2px;
+  }
+
+  @keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── PROOF SECTION ── */
+  .section { max-width: 1100px; margin: 0 auto; padding: 40px 20px; }
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 32px; letter-spacing: 2px; color: var(--green);
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 6px;
+  }
+  .section-sub {
+    font-size: 14px; color: var(--text-soft);
+    margin-bottom: 24px;
+  }
+
+  /* Proof Gallery */
+  .proof-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 16px;
+  }
+  .proof-card {
+    background: var(--white);
+    border-radius: 16px;
+    overflow: hidden;
+    border: 2px solid var(--gray-light);
+    box-shadow: var(--shadow);
+    transition: transform 0.2s, box-shadow 0.2s;
+    cursor: pointer;
+  }
+  .proof-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--green-light);
+  }
+  .proof-img {
+    width: 100%; aspect-ratio: 4/3;
+    object-fit: cover; display: block;
+    background: var(--green-pale);
+  }
+  .proof-img-placeholder {
+    width: 100%; aspect-ratio: 4/3;
+    background: linear-gradient(135deg, var(--green-pale), var(--gray-light));
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 8px; color: var(--green);
+  }
+  .proof-img-placeholder .icon { font-size: 36px; }
+  .proof-img-placeholder span { font-size: 12px; font-weight: 600; color: var(--gray); }
+  .proof-meta {
+    padding: 12px 14px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .proof-date { font-size: 12px; font-weight: 600; color: var(--text-soft); }
+  .proof-badge {
+    font-size: 10px; font-weight: 700;
+    background: var(--green-pale); color: var(--green);
+    border-radius: 6px; padding: 3px 8px;
+    letter-spacing: 0.5px;
+  }
+  .proof-badge.today {
+    background: var(--gold); color: var(--dark);
+  }
+
+  /* ── ODDS SECTION ── */
+  .odds-header {
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 12px; margin-bottom: 20px;
+  }
+  .odds-date-badge {
+    background: var(--green); color: white;
+    border-radius: 10px; padding: 6px 16px;
+    font-size: 13px; font-weight: 600;
+  }
+
+  .match-card {
+    background: var(--white);
+    border-radius: 18px;
+    border: 2px solid var(--gray-light);
+    box-shadow: var(--shadow);
+    margin-bottom: 14px;
+    overflow: hidden;
+    transition: border-color 0.2s;
+    animation: slideUp 0.4s ease both;
+  }
+  .match-card:hover { border-color: var(--green-light); }
+
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .match-top {
+    padding: 16px 20px;
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 12px; flex-wrap: wrap;
+  }
+  .match-league {
+    font-size: 11px; font-weight: 700;
+    color: var(--green-light); text-transform: uppercase; letter-spacing: 1px;
+    display: flex; align-items: center; gap: 5px;
+  }
+  .match-time {
+    font-size: 12px; color: var(--gray); font-weight: 500;
+  }
+  .match-teams {
+    padding: 0 20px 16px;
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 12px;
+  }
+  .team {
+    flex: 1; text-align: center;
+  }
+  .team-name {
+    font-size: 16px; font-weight: 700; color: var(--text);
+    line-height: 1.2;
+  }
+  .team-flag { font-size: 24px; margin-bottom: 4px; }
+  .vs-badge {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px; color: var(--green);
+    background: var(--green-pale);
+    border-radius: 8px; padding: 4px 12px;
+    flex-shrink: 0;
+  }
+  .match-bottom {
+    background: var(--off-white);
+    border-top: 1.5px solid var(--gray-light);
+    padding: 12px 20px;
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 12px; flex-wrap: wrap;
+  }
+  .odds-info {
+    display: flex; align-items: center; gap: 10px;
+  }
+  .odds-label { font-size: 12px; color: var(--gray); font-weight: 500; }
+  .odds-value {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 26px; color: var(--green);
+    background: var(--green-pale);
+    border-radius: 8px; padding: 2px 12px;
+  }
+  .pick-locked {
+    display: flex; align-items: center; gap: 6px;
+    background: #fff3cd; border: 1.5px solid #ffc107;
+    border-radius: 10px; padding: 7px 14px;
+    font-size: 13px; font-weight: 700; color: #856404;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .pick-locked:hover { background: #ffe69c; }
+  .pick-unlocked {
+    display: flex; align-items: center; gap: 6px;
+    background: var(--green); color: white;
+    border-radius: 10px; padding: 7px 14px;
+    font-size: 13px; font-weight: 700;
+  }
+
+  /* ── PAY NOW SECTION ── */
+  .pay-section {
+    background: linear-gradient(135deg, var(--dark), #1a4d2a);
+    color: white; border-radius: 24px;
+    padding: 40px 30px; text-align: center;
+    margin: 0 20px 40px;
+    max-width: 1060px; margin-left: auto; margin-right: auto;
+    box-shadow: var(--shadow-lg);
+    position: relative; overflow: hidden;
+  }
+  .pay-section::before {
+    content: '👑';
+    position: absolute; right: 30px; top: 20px;
+    font-size: 80px; opacity: 0.08;
+  }
+  .pay-section h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 42px; letter-spacing: 3px; color: var(--gold);
+    margin-bottom: 8px;
+  }
+  .pay-section p {
+    font-size: 15px; color: rgba(255,255,255,0.7);
+    margin-bottom: 28px;
+  }
+  .pay-features {
+    display: flex; justify-content: center; gap: 24px;
+    flex-wrap: wrap; margin-bottom: 28px;
+  }
+  .pay-feature {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 13px; color: rgba(255,255,255,0.8); font-weight: 500;
+  }
+  .btn-pay {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--gold);
+    color: var(--dark); font-family: 'Outfit', sans-serif;
+    font-size: 16px; font-weight: 800;
+    border: none; border-radius: 14px;
+    padding: 16px 40px; cursor: pointer;
+    box-shadow: 0 4px 20px rgba(240,180,41,0.4);
+    transition: transform 0.15s, box-shadow 0.15s;
+    letter-spacing: 0.5px;
+  }
+  .btn-pay:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(240,180,41,0.5);
+  }
+  .btn-pay:active { transform: translateY(0); }
+
+  /* ── MODAL ── */
+  .modal-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.6); backdrop-filter: blur(4px);
+    z-index: 1000; align-items: center; justify-content: center;
+    padding: 20px;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--white); border-radius: 24px;
+    max-width: 480px; width: 100%;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    overflow: hidden;
+    animation: popIn 0.3s ease both;
+  }
+  @keyframes popIn {
+    from { opacity: 0; transform: scale(0.9) translateY(20px); }
+    to   { opacity: 1; transform: scale(1) translateY(0); }
+  }
+  .modal-header {
+    background: linear-gradient(135deg, var(--dark), #1a4d2a);
+    color: white; padding: 24px 28px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .modal-header h3 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 26px; letter-spacing: 2px; color: var(--gold);
+  }
+  .modal-close {
+    background: rgba(255,255,255,0.1); border: none;
+    color: white; font-size: 18px;
+    width: 34px; height: 34px; border-radius: 50%;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    transition: background 0.2s;
+  }
+  .modal-close:hover { background: rgba(255,255,255,0.2); }
+  .modal-body { padding: 28px; }
+
+  .step-indicator {
+    display: flex; align-items: center; gap: 8px;
+    margin-bottom: 24px;
+  }
+  .step-dot {
+    width: 32px; height: 32px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 700;
+    background: var(--gray-light); color: var(--gray);
+    transition: all 0.3s;
+    flex-shrink: 0;
+  }
+  .step-dot.active { background: var(--green); color: white; }
+  .step-dot.done { background: var(--green-glow); color: white; }
+  .step-line { flex: 1; height: 2px; background: var(--gray-light); }
+  .step-line.done { background: var(--green-glow); }
+
+  .form-group { margin-bottom: 18px; }
+  .form-label {
+    display: block; font-size: 13px; font-weight: 600;
+    color: var(--text-soft); margin-bottom: 6px;
+    text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  .form-select, .form-input {
+    width: 100%; padding: 13px 16px;
+    border: 2px solid var(--gray-light); border-radius: 12px;
+    font-family: 'Outfit', sans-serif; font-size: 15px;
+    color: var(--text); background: var(--white);
+    outline: none; transition: border-color 0.2s;
+    appearance: none;
+  }
+  .form-select:focus, .form-input:focus { border-color: var(--green); }
+
+  .btn-next {
+    width: 100%; padding: 14px;
+    background: var(--green); color: white;
+    border: none; border-radius: 12px;
+    font-family: 'Outfit', sans-serif;
+    font-size: 15px; font-weight: 700;
+    cursor: pointer; transition: background 0.2s;
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+  }
+  .btn-next:hover { background: var(--green-light); }
+  .btn-next:disabled { background: var(--gray); cursor: not-allowed; }
+
+  /* Waiting screen */
+  .waiting-screen {
+    text-align: center; padding: 10px 0;
+  }
+  .waiting-spinner {
+    width: 64px; height: 64px; border-radius: 50%;
+    border: 4px solid var(--gray-light);
+    border-top-color: var(--green);
+    animation: spin 1s linear infinite;
+    margin: 0 auto 16px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .waiting-screen h4 {
+    font-size: 18px; font-weight: 700; color: var(--text); margin-bottom: 6px;
+  }
+  .waiting-screen p { font-size: 14px; color: var(--gray); }
+
+  /* Payment details */
+  .payment-details-box {
+    background: var(--green-pale);
+    border: 2px solid var(--green-light);
+    border-radius: 14px; padding: 20px;
+    margin-bottom: 16px;
+  }
+  .payment-details-box h4 {
+    font-size: 16px; font-weight: 700; color: var(--green);
+    margin-bottom: 12px;
+  }
+  .payment-detail-row {
+    display: flex; justify-content: space-between;
+    font-size: 14px; margin-bottom: 6px;
+  }
+  .payment-detail-row .key { color: var(--text-soft); font-weight: 500; }
+  .payment-detail-row .val { font-weight: 700; color: var(--text); }
+
+  /* ── HISTORY TABLE ── */
+  .history-table {
+    width: 100%; border-collapse: collapse;
+  }
+  .history-table th {
+    background: var(--green); color: white;
+    font-size: 12px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.5px;
+    padding: 11px 16px; text-align: left;
+  }
+  .history-table th:first-child { border-radius: 10px 0 0 0; }
+  .history-table th:last-child  { border-radius: 0 10px 0 0; }
+  .history-table td {
+    padding: 12px 16px; font-size: 14px;
+    border-bottom: 1px solid var(--gray-light);
+  }
+  .history-table tr:hover td { background: var(--green-pale); }
+  .win-badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    background: #d4edda; color: #1a6930;
+    border-radius: 6px; padding: 3px 10px;
+    font-size: 12px; font-weight: 700;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--dark); color: rgba(255,255,255,0.5);
+    text-align: center; padding: 24px 20px;
+    font-size: 13px; margin-top: 40px;
+  }
+  footer .footer-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px; color: var(--gold);
+    letter-spacing: 2px; margin-bottom: 6px;
+  }
+
+  /* ── IMAGE MODAL ── */
+  .img-modal-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.85);
+    z-index: 2000; align-items: center; justify-content: center;
+  }
+  .img-modal-overlay.open { display: flex; }
+  .img-modal-overlay img {
+    max-width: 90vw; max-height: 90vh;
+    border-radius: 12px; box-shadow: 0 0 60px rgba(0,0,0,0.8);
+  }
+  .img-modal-close {
+    position: absolute; top: 20px; right: 20px;
+    background: rgba(255,255,255,0.15); border: none;
+    color: white; font-size: 22px;
+    width: 44px; height: 44px; border-radius: 50%;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 600px) {
+    .hero-stats { gap: 20px; }
+    .match-teams { flex-direction: column; gap: 8px; }
+    .vs-badge { display: none; }
+    .proof-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="header-inner">
+    <a class="logo" href="#">
+      <span class="logo-crown">👑</span>
+      <div>
+        <div class="logo-text">OddsKing <span>Pro</span></div>
+        <span class="logo-tagline">Win Every Day</span>
+      </div>
+    </a>
+    <div class="header-live">
+      <div class="pulse"></div>
+      LIVE TIPS TODAY
+    </div>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-badge">⚽ Football Tips — Updated Daily</div>
+  <h1>ODDS<span>KING</span><br>PRO</h1>
+  <p>Professional football predictions • Verified wins • Daily tips</p>
+  <div class="hero-stats">
+    <div class="hero-stat">
+      <div class="hero-stat-num" id="winRate">87%</div>
+      <div class="hero-stat-label">Win Rate</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-num" id="totalWins">1,240</div>
+      <div class="hero-stat-label">Total Wins</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-num" id="daysActive">365</div>
+      <div class="hero-stat-label">Days Active</div>
+    </div>
+  </div>
+</section>
+
+<!-- PROOF OF WINS -->
+<div class="section">
+  <div class="section-title">📸 Proof of Wins</div>
+  <div class="section-sub">Real screenshots — updated by admin every day</div>
+
+  <div class="proof-grid" id="proofGrid">
+    <!-- Today's proof -->
+    <div class="proof-card" onclick="openImgModal(this)">
+      <div class="proof-img-placeholder">
+        <span class="icon">📷</span>
+        <span>Today's proof</span>
+        <span style="font-size:10px;color:#aaa">Admin uploads daily</span>
+      </div>
+      <div class="proof-meta">
+        <span class="proof-date" id="todayDate"></span>
+        <span class="proof-badge today">TODAY</span>
+      </div>
+    </div>
+    <!-- Past proofs (placeholders) -->
+    <div class="proof-card" onclick="openImgModal(this)">
+      <div class="proof-img-placeholder"><span class="icon">✅</span><span>Win proof</span></div>
+      <div class="proof-meta"><span class="proof-date" id="d1"></span><span class="proof-badge">WIN</span></div>
+    </div>
+    <div class="proof-card" onclick="openImgModal(this)">
+      <div class="proof-img-placeholder"><span class="icon">✅</span><span>Win proof</span></div>
+      <div class="proof-meta"><span class="proof-date" id="d2"></span><span class="proof-badge">WIN</span></div>
+    </div>
+    <div class="proof-card" onclick="openImgModal(this)">
+      <div class="proof-img-placeholder"><span class="icon">✅</span><span>Win proof</span></div>
+      <div class="proof-meta"><span class="proof-date" id="d3"></span><span class="proof-badge">WIN</span></div>
+    </div>
+    <div class="proof-card" onclick="openImgModal(this)">
+      <div class="proof-img-placeholder"><span class="icon">✅</span><span>Win proof</span></div>
+      <div class="proof-meta"><span class="proof-date" id="d4"></span><span class="proof-badge">WIN</span></div>
+    </div>
+    <div class="proof-card" onclick="openImgModal(this)">
+      <div class="proof-img-placeholder"><span class="icon">✅</span><span>Win proof</span></div>
+      <div class="proof-meta"><span class="proof-date" id="d5"></span><span class="proof-badge">WIN</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- TODAY'S ODDS -->
+<div class="section" style="padding-top:0">
+  <div class="odds-header">
+    <div>
+      <div class="section-title">⚽ Today's Matches</div>
+      <div class="section-sub">Click the lock to unlock the winning prediction after payment</div>
+    </div>
+    <div class="odds-date-badge" id="matchDate"></div>
+  </div>
+
+  <!-- Match 1 -->
+  <div class="match-card" style="animation-delay:0.1s">
+    <div class="match-top">
+      <div class="match-league">🏴󠁧󠁢󠁥󠁮󠁧󠁿 Premier League</div>
+      <div class="match-time">⏰ 15:00 GMT</div>
+    </div>
+    <div class="match-teams">
+      <div class="team"><div class="team-flag">🔴</div><div class="team-name">Manchester United</div></div>
+      <div class="vs-badge">VS</div>
+      <div class="team"><div class="team-flag">🔵</div><div class="team-name">Chelsea FC</div></div>
+    </div>
+    <div class="match-bottom">
+      <div class="odds-info">
+        <span class="odds-label">Odds:</span>
+        <span class="odds-value">2.45</span>
+      </div>
+      <div class="pick-locked" onclick="openPayModal()">🔒 Unlock Pick</div>
+    </div>
+  </div>
+
+  <!-- Match 2 -->
+  <div class="match-card" style="animation-delay:0.2s">
+    <div class="match-top">
+      <div class="match-league">🇪🇸 La Liga</div>
+      <div class="match-time">⏰ 20:00 GMT</div>
+    </div>
+    <div class="match-teams">
+      <div class="team"><div class="team-flag">🔵🔴</div><div class="team-name">FC Barcelona</div></div>
+      <div class="vs-badge">VS</div>
+      <div class="team"><div class="team-flag">⚪</div><div class="team-name">Real Madrid</div></div>
+    </div>
+    <div class="match-bottom">
+      <div class="odds-info">
+        <span class="odds-label">Odds:</span>
+        <span class="odds-value">1.85</span>
+      </div>
+      <div class="pick-locked" onclick="openPayModal()">🔒 Unlock Pick</div>
+    </div>
+  </div>
+
+  <!-- Match 3 -->
+  <div class="match-card" style="animation-delay:0.3s">
+    <div class="match-top">
+      <div class="match-league">🇩🇪 Bundesliga</div>
+      <div class="match-time">⏰ 17:30 GMT</div>
+    </div>
+    <div class="match-teams">
+      <div class="team"><div class="team-flag">🔴</div><div class="team-name">Bayern Munich</div></div>
+      <div class="vs-badge">VS</div>
+      <div class="team"><div class="team-flag">🟡⚫</div><div class="team-name">Borussia Dortmund</div></div>
+    </div>
+    <div class="match-bottom">
+      <div class="odds-info">
+        <span class="odds-label">Odds:</span>
+        <span class="odds-value">3.10</span>
+      </div>
+      <div class="pick-locked" onclick="openPayModal()">🔒 Unlock Pick</div>
+    </div>
+  </div>
+
+  <!-- Match 4 -->
+  <div class="match-card" style="animation-delay:0.4s">
+    <div class="match-top">
+      <div class="match-league">🇮🇹 Serie A</div>
+      <div class="match-time">⏰ 19:45 GMT</div>
+    </div>
+    <div class="match-teams">
+      <div class="team"><div class="team-flag">⚫🔵</div><div class="team-name">Inter Milan</div></div>
+      <div class="vs-badge">VS</div>
+      <div class="team"><div class="team-flag">⚫🔴</div><div class="team-name">AC Milan</div></div>
+    </div>
+    <div class="match-bottom">
+      <div class="odds-info">
+        <span class="odds-label">Odds:</span>
+        <span class="odds-value">2.20</span>
+      </div>
+      <div class="pick-locked" onclick="openPayModal()">🔒 Unlock Pick</div>
+    </div>
+  </div>
+</div>
+
+<!-- PAY NOW SECTION -->
+<div class="pay-section">
+  <h2>🔓 UNLOCK ALL PICKS TODAY</h2>
+  <p>Get instant access to all winning predictions — confirmed by our expert tipster</p>
+  <div class="pay-features">
+    <div class="pay-feature">✅ All matches unlocked</div>
+    <div class="pay-feature">📊 Full analysis</div>
+    <div class="pay-feature">⚡ Instant access</div>
+    <div class="pay-feature">🌍 All countries</div>
+  </div>
+  <button class="btn-pay" onclick="openPayModal()">
+    💳 PAY NOW — UNLOCK PICKS
+  </button>
+</div>
+
+<!-- WIN HISTORY -->
+<div class="section">
+  <div class="section-title">🏆 Win History</div>
+  <div class="section-sub">Our recent track record — fully transparent</div>
+  <div style="overflow-x:auto; border-radius:14px; box-shadow:var(--shadow)">
+    <table class="history-table">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Match</th>
+          <th>Pick</th>
+          <th>Odds</th>
+          <th>Result</th>
+        </tr>
+      </thead>
+      <tbody id="historyBody"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">👑 OddsKing Pro</div>
+  <p>Professional football tips • Win Every Day</p>
+  <p style="margin-top:8px;font-size:11px;opacity:0.5">18+ only. Bet responsibly. Predictions are for entertainment purposes.</p>
+</footer>
+
+<!-- PAYMENT MODAL -->
+<div class="modal-overlay" id="payModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>💳 UNLOCK PICKS</h3>
+      <button class="modal-close" onclick="closePayModal()">✕</button>
+    </div>
+    <div class="modal-body" id="modalBody">
+      <!-- Step content injected by JS -->
+    </div>
+  </div>
+</div>
+
+<!-- IMAGE MODAL -->
+<div class="img-modal-overlay" id="imgModal" onclick="closeImgModal()">
+  <button class="img-modal-close" onclick="closeImgModal()">✕</button>
+  <img id="imgModalSrc" src="" alt="Proof">
+</div>
+
+<script>
+// ── Date Setup ──
+const today = new Date();
+const fmt = (d) => d.toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' });
+
+document.getElementById('todayDate').textContent = fmt(today);
+document.getElementById('matchDate').textContent  = '📅 ' + fmt(today);
+
+for (let i = 1; i <= 5; i++) {
+  const d = new Date(today); d.setDate(d.getDate() - i);
+  document.getElementById('d' + i).textContent = fmt(d);
+}
+
+// ── Win History Data ──
+const historyData = [
+  { match: 'Man Utd vs Arsenal',     pick: 'Man Utd Win',    odds: '2.10', win: true  },
+  { match: 'Barcelona vs Atletico',  pick: 'Over 2.5 Goals', odds: '1.75', win: true  },
+  { match: 'PSG vs Lyon',            pick: 'PSG Win',        odds: '1.60', win: true  },
+  { match: 'Liverpool vs City',      pick: 'Draw',           odds: '3.20', win: false },
+  { match: 'Juventus vs Roma',       pick: 'Juventus Win',   odds: '1.90', win: true  },
+  { match: 'Dortmund vs Leipzig',    pick: 'Over 2.5',       odds: '1.85', win: true  },
+  { match: 'Chelsea vs Spurs',       pick: 'Chelsea Win',    odds: '2.00', win: true  },
+];
+
+const tbody = document.getElementById('historyBody');
+historyData.forEach((row, i) => {
+  const d = new Date(today); d.setDate(d.getDate() - i - 1);
+  tbody.innerHTML += `
+    <tr>
+      <td style="font-weight:600;color:var(--text-soft)">${fmt(d)}</td>
+      <td style="font-weight:600">${row.match}</td>
+      <td>${row.pick}</td>
+      <td><b style="color:var(--green)">${row.odds}</b></td>
+      <td>${row.win
+        ? `<span class="win-badge">✅ WIN</span>`
+        : `<span style="background:#fde;color:#c00;border-radius:6px;padding:3px 10px;font-size:12px;font-weight:700">❌ LOSS</span>`
+      }</td>
+    </tr>`;
+});
+
+// ── Payment Countries & Methods ──
+const paymentMethods = {
+  "Kenya":       ["M-Pesa", "Airtel Money"],
+  "Tanzania":    ["M-Pesa (Vodacom)", "Tigo Pesa", "Airtel Money", "Halotel"],
+  "Uganda":      ["MTN Mobile Money", "Airtel Money"],
+  "Ghana":       ["MTN MoMo", "Vodafone Cash", "AirtelTigo Money"],
+  "Nigeria":     ["Bank Transfer", "Opay", "Palmpay", "USSD"],
+  "Zimbabwe":    ["EcoCash", "OneMoney", "InnBucks"],
+  "Zambia":      ["MTN Money", "Airtel Money", "Zamtel Money"],
+  "South Africa":["SnapScan", "FNB eWallet", "MTN MoMo"],
+  "Ethiopia":    ["Telebirr", "CBE Birr"],
+  "Other":       ["Bank Transfer", "Western Union", "MoneyGram"],
+};
+
+// Build country list
+const allCountries = Object.keys(paymentMethods);
+
+let currentStep = 1;
+let payData = {};
+
+function openPayModal() {
+  currentStep = 1; payData = {};
+  renderStep();
+  document.getElementById('payModal').classList.add('open');
+}
+function closePayModal() {
+  document.getElementById('payModal').classList.remove('open');
+}
+
+function renderStep() {
+  const body = document.getElementById('modalBody');
+
+  // Step indicator
+  const steps = ['Country', 'Method', 'Confirm', 'Pay'];
+  const stepsHtml = `
+    <div class="step-indicator">
+      ${steps.map((s, i) => `
+        <div class="step-dot ${currentStep > i+1 ? 'done' : currentStep === i+1 ? 'active' : ''}">${currentStep > i+1 ? '✓' : i+1}</div>
+        ${i < steps.length-1 ? `<div class="step-line ${currentStep > i+2 ? 'done' : ''}"></div>` : ''}
+      `).join('')}
+    </div>`;
+
+  if (currentStep === 1) {
+    body.innerHTML = stepsHtml + `
+      <div class="form-group">
+        <label class="form-label">🌍 Select Your Country</label>
+        <select class="form-select" id="countrySelect">
+          <option value="">— Choose country —</option>
+          ${allCountries.map(c => `<option value="${c}">${c}</option>`).join('')}
+        </select>
+      </div>
+      <button class="btn-next" onclick="step1Next()">Continue →</button>`;
+  }
+
+  else if (currentStep === 2) {
+    const methods = paymentMethods[payData.country] || ['Bank Transfer'];
+    body.innerHTML = stepsHtml + `
+      <div class="form-group">
+        <label class="form-label">💳 Payment Method</label>
+        <select class="form-select" id="methodSelect">
+          <option value="">— Choose method —</option>
+          ${methods.map(m => `<option value="${m}">${m}</option>`).join('')}
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">📱 Your Phone Number</label>
+        <input type="tel" class="form-input" id="phoneInput" placeholder="+254 7XX XXX XXX">
+      </div>
+      <button class="btn-next" onclick="step2Next()">Continue →</button>`;
+  }
+
+  else if (currentStep === 3) {
+    body.innerHTML = stepsHtml + `
+      <div class="payment-details-box">
+        <h4>📋 Order Summary</h4>
+        <div class="payment-detail-row"><span class="key">Package</span><span class="val">Daily Tips — All Matches</span></div>
+        <div class="payment-detail-row"><span class="key">Country</span><span class="val">${payData.country}</span></div>
+        <div class="payment-detail-row"><span class="key">Method</span><span class="val">${payData.method}</span></div>
+        <div class="payment-detail-row"><span class="key">Phone</span><span class="val">${payData.phone}</span></div>
+      </div>
+      <p style="font-size:13px;color:var(--text-soft);margin-bottom:16px;text-align:center">
+        ✅ After confirming, the admin will send you payment instructions via this page.
+      </p>
+      <button class="btn-next" onclick="step3Confirm()">✅ Confirm & Send Request</button>`;
+  }
+
+  else if (currentStep === 4) {
+    body.innerHTML = stepsHtml + `
+      <div class="waiting-screen">
+        <div class="waiting-spinner"></div>
+        <h4>Waiting for Admin...</h4>
+        <p>Your request has been sent.<br>The admin will provide payment instructions shortly.</p>
+        <div style="margin-top:20px;padding:16px;background:var(--green-pale);border-radius:12px;text-align:left">
+          <div style="font-size:12px;color:var(--green);font-weight:700;margin-bottom:8px">📋 YOUR REQUEST ID</div>
+          <div style="font-family:monospace;font-size:14px;font-weight:700;color:var(--text)" id="reqId">—</div>
+        </div>
+      </div>`;
+    sendPaymentRequest();
+  }
+
+  else if (currentStep === 5) {
+    body.innerHTML = stepsHtml + `
+      <div class="payment-details-box">
+        <h4>💳 Payment Instructions</h4>
+        <div id="adminInstructions" style="font-size:15px;font-weight:600;color:var(--text);line-height:1.7"></div>
+      </div>
+      <p style="font-size:13px;color:var(--text-soft);margin-bottom:16px;text-align:center">
+        ⚠️ After payment, the admin will confirm and unlock your picks.
+      </p>
+      <button class="btn-next" onclick="closePayModal()">✅ Got it!</button>`;
+  }
+}
+
+function step1Next() {
+  const val = document.getElementById('countrySelect').value;
+  if (!val) return alert('Please select your country!');
+  payData.country = val; currentStep = 2; renderStep();
+}
+function step2Next() {
+  const method = document.getElementById('methodSelect').value;
+  const phone  = document.getElementById('phoneInput').value.trim();
+  if (!method) return alert('Please select a payment method!');
+  if (!phone)  return alert('Please enter your phone number!');
+  payData.method = method; payData.phone = phone;
+  currentStep = 3; renderStep();
+}
+function step3Confirm() {
+  currentStep = 4; renderStep();
+}
+
+async function sendPaymentRequest() {
+  const reqId = 'PAY-' + Date.now();
+  document.getElementById('reqId').textContent = reqId;
+
+  try {
+    // Send to backend
+    const res = await fetch('/api/payment-request', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        requestId: reqId,
+        country:   payData.country,
+        method:    payData.method,
+        phone:     payData.phone,
+        timestamp: new Date().toISOString()
+      })
+    });
+
+    // Poll for admin response
+    pollForInstructions(reqId);
+  } catch (e) {
+    // If no backend, just show demo
+    setTimeout(() => showDemoInstructions(), 3000);
+  }
+}
+
+function pollForInstructions(reqId) {
+  let attempts = 0;
+  const interval = setInterval(async () => {
+    attempts++;
+    if (attempts > 60) { clearInterval(interval); return; }
+    try {
+      const res  = await fetch(`/api/payment-status/${reqId}`);
+      const data = await res.json();
+      if (data.instructions) {
+        clearInterval(interval);
+        showInstructions(data.instructions);
+      }
+    } catch (e) { /* keep polling */ }
+  }, 3000);
+}
+
+function showDemoInstructions() {
+  if (currentStep !== 4) return;
+  currentStep = 5; renderStep();
+  document.getElementById('adminInstructions').innerHTML = `
+    Send <b>${payData.method}</b> payment to:<br><br>
+    📱 <b>+254 XXX XXX XXX</b><br>
+    💰 Amount: <b>KES 200 / Daily Tips</b><br><br>
+    After payment, reply here with your confirmation code.
+  `;
+}
+
+function showInstructions(text) {
+  currentStep = 5; renderStep();
+  document.getElementById('adminInstructions').innerHTML = text.replace(/\n/g, '<br>');
+}
+
+// ── Image Modal ──
+function openImgModal(card) {
+  const img = card.querySelector('img');
+  if (!img) return; // placeholder, no image yet
+  document.getElementById('imgModalSrc').src = img.src;
+  document.getElementById('imgModal').classList.add('open');
+}
+function closeImgModal() {
+  document.getElementById('imgModal').classList.remove('open');
+}
+
+// Close modals on overlay click
+document.getElementById('payModal').addEventListener('click', function(e) {
+  if (e.target === this) closePayModal();
+});
+</script>
+</body>
+</html>
