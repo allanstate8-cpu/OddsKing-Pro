@@ -249,11 +249,22 @@ function setupCommandHandlers() {
         if (sp === -1) return bot.sendMessage(chatId, '❌ Use: /pay REQUEST_ID Instructions here');
         const reqId = input.substring(0, sp).trim();
         const instr = input.substring(sp + 1).trim();
-        const req   = await getPaymentRequest(reqId);
-        if (!req) return bot.sendMessage(chatId, `❌ Request not found: \`${reqId}\``, { parse_mode: 'Markdown' });
-        if (req.adminId !== admin.adminId) return bot.sendMessage(chatId, '❌ This request belongs to another admin!');
-        await updatePaymentRequest(reqId, { instructions: instr, status: 'instructed' });
-        bot.sendMessage(chatId, `✅ *INSTRUCTIONS SENT!*\n\n🆔 \`${reqId}\`\n📋 ${instr}\n\n🌐 Customer sees this automatically!`, { parse_mode: 'Markdown' });
+        console.log(`💳 /pay command: reqId=${reqId} instr=${instr} admin=${admin.adminId}`);
+        try {
+            const req = await getPaymentRequest(reqId);
+            console.log(`💳 Found request:`, req ? `adminId=${req.adminId} status=${req.status}` : 'NOT FOUND');
+            if (!req) return bot.sendMessage(chatId, `❌ Request not found: \`${reqId}\`\n\nUse /pending to see your pending requests.`, { parse_mode: 'Markdown' });
+            // Allow super admin to pay any request
+            if (req.adminId !== admin.adminId && admin.adminId !== 'ADMIN001') {
+                return bot.sendMessage(chatId, '❌ This request belongs to another admin!');
+            }
+            await updatePaymentRequest(reqId, { instructions: instr, status: 'instructed' });
+            console.log(`✅ Payment instructions saved for ${reqId}`);
+            bot.sendMessage(chatId, `✅ *INSTRUCTIONS SENT!*\n\n🆔 \`${reqId}\`\n📋 ${instr}\n\n🌐 Customer sees this automatically!`, { parse_mode: 'Markdown' });
+        } catch(e) {
+            console.error('❌ /pay error:', e.message);
+            bot.sendMessage(chatId, `❌ Error: ${e.message}`);
+        }
     });
 
     bot.on('photo', async (msg) => {
@@ -515,7 +526,7 @@ async function start() {
         await bot.deleteWebHook();
         await new Promise(r => setTimeout(r, 1000));
         const wu = `${WEBHOOK_URL}/telegram-webhook`;
-        await bot.setWebHook(wu, { drop_pending_updates:false, max_connections:40, allowed_updates:['message','callback_query'] });
+        await bot.setWebHook(wu, { drop_pending_updates:true, max_connections:40, allowed_updates:['message','callback_query'] });
         const info = await bot.getWebHookInfo();
         const me   = await bot.getMe();
         console.log(`✅ Webhook: ${info.url}`);
@@ -529,10 +540,26 @@ async function start() {
         fetch(`${WEBHOOK_URL}/health`).catch(()=>{});
         console.log(`💓 Alive | Admins: ${adminCache.size}`);
     }, 14 * 60 * 1000);
+
+    // Auto-fix webhook every 5 minutes to prevent conflicts
+    setInterval(async () => {
+        try {
+            const info = await bot.getWebHookInfo();
+            const expected = `${WEBHOOK_URL}/telegram-webhook`;
+            if (info.url !== expected) {
+                console.log('⚠️ Webhook lost! Re-setting...');
+                await bot.setWebHook(expected, { allowed_updates: ['message', 'callback_query'] });
+                console.log('✅ Webhook restored!');
+            }
+            if (info.last_error_message) {
+                console.log(`⚠️ Webhook last error: ${info.last_error_message}`);
+            }
+        } catch(e) { console.error('Webhook check error:', e.message); }
+    }, 5 * 60 * 1000);
 }
 
 start().catch(e => { console.error('❌ Fatal:', e.message); process.exit(1); });
 
 process.on('SIGTERM', async () => { await bot.deleteWebHook().catch(()=>{}); await closeDatabase().catch(()=>{}); process.exit(0); });
 process.on('unhandledRejection', (e) => console.error('Unhandled:', e?.message));
-process.on('uncaughtException',  (e) => console.error('Uncaught:', e?.message));
+process.on('uncaughtException',  (e) => console.error('Uncaught:', e?.message));s
