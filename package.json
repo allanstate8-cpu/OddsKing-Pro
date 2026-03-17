@@ -1,18 +1,14 @@
 {
   "name": "oddsking-pro",
-  "version": "1.0.0",
-  "description": "OddsKing Pro — Football Betting Tips Website",
+  "version": "2.0.0",
   "main": "oddsking-server.js",
   "scripts": {
-    "start": "node oddsking-server.js",
-    "dev":   "nodemon oddsking-server.js"
+    "start": "node oddsking-server.js"
   },
   "dependencies": {
     "express": "^4.18.2",
     "node-telegram-bot-api": "^0.64.0",
+    "mongodb": "^6.3.0",
     "dotenv": "^16.0.3"
-  },
-  "devDependencies": {
-    "nodemon": "^3.0.1"
   }
 }
