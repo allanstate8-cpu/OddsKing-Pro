@@ -118,8 +118,13 @@ console.log('=================\n');
 if (!BOT_TOKEN) { console.error('❌ SUPER_ADMIN_BOT_TOKEN missing!'); process.exit(1); }
 
 const bot = new TelegramBot(BOT_TOKEN);
-bot.on('error',         (e) => console.error('❌ Bot error:', e.message));
+bot.on('error',         (e) => console.error('❌ Bot error:', e.message, e.stack));
 bot.on('polling_error', (e) => console.error('❌ Polling error:', e.message));
+
+// Global handler — catch ALL unhandled promise rejections in bot handlers
+process.on('unhandledRejection', (reason, promise) => {
+    console.error('❌ Unhandled Rejection:', reason?.message || reason);
+});
 
 // ══════════════════════════════════════
 // CACHE
@@ -166,7 +171,18 @@ async function loadAdminsFromDB() {
 // WEBHOOK
 // ══════════════════════════════════════
 app.post('/telegram-webhook', (req, res) => {
-    try { bot.processUpdate(req.body); } catch (e) { console.error('processUpdate error:', e.message); }
+    try {
+        const update = req.body;
+        // Log what we receive
+        if (update.message) {
+            const text = update.message.text || '[no text]';
+            const from = update.message.chat.id;
+            console.log(`📨 Message from ${from}: ${text.substring(0, 50)}`);
+        }
+        bot.processUpdate(update);
+    } catch (e) {
+        console.error('processUpdate error:', e.message);
+    }
     res.sendStatus(200);
 });
 
@@ -183,18 +199,21 @@ app.use((req, res, next) => {
 function setupCommandHandlers() {
 
     bot.onText(/\/start/, async (msg) => {
-        const chatId = msg.chat.id;
-        const admin  = getAdminByChatId(chatId);
-        if (!admin) {
-            return bot.sendMessage(chatId, `👑 *Welcome to OddsKing Pro!*\n\nYour Chat ID: \`${chatId}\`\n\nProvide this to the super admin to get access.`, { parse_mode: 'Markdown' });
-        }
-        if (pausedAdmins.has(admin.adminId) && admin.adminId !== 'ADMIN001') {
-            return bot.sendMessage(chatId, `🚫 *ACCESS PAUSED*\n\nContact super admin.\n*Your ID:* \`${admin.adminId}\``, { parse_mode: 'Markdown' });
-        }
-        const isSA = admin.adminId === 'ADMIN001';
-        let msg2 = `👑 *Welcome ${admin.name}!*\n\n*ID:* \`${admin.adminId}\`\n*Role:* ${isSA ? '⭐ Super Admin' : '👤 Admin'}\n*Your Link:*\n${WEBHOOK_URL}?admin=${admin.adminId}\n\n/mylink /stats /pending /myinfo\n/addmatch /unlock /clearmatches /pay\n/addwin MATCH|PICK|ODDS|WIN — add win history\n/wins — view win history`;
-        if (isSA) msg2 += `\n\n*Super Admin Only:*\n/addadmin NAME|EMAIL|CHATID\n/addadminid ADMINID|NAME|EMAIL|CHATID\n/pauseadmin ADMINID\n/unpauseadmin ADMINID\n/removeadmin ADMINID\n/admins\n/send ADMINID msg\n/broadcast msg`;
-        bot.sendMessage(chatId, msg2, { parse_mode: 'Markdown' });
+        try {
+            const chatId = msg.chat.id;
+            console.log(`/start from chatId: ${chatId}`);
+            const admin  = getAdminByChatId(chatId);
+            if (!admin) {
+                return bot.sendMessage(chatId, `👑 *Welcome to OddsKing Pro!*\n\nYour Chat ID: \`${chatId}\`\n\nProvide this to the super admin to get access.`, { parse_mode: 'Markdown' });
+            }
+            if (pausedAdmins.has(admin.adminId) && admin.adminId !== 'ADMIN001') {
+                return bot.sendMessage(chatId, `🚫 *ACCESS PAUSED*\n\nContact super admin.\n*Your ID:* \`${admin.adminId}\``, { parse_mode: 'Markdown' });
+            }
+            const isSA = admin.adminId === 'ADMIN001';
+            let msg2 = `👑 *Welcome ${admin.name}!*\n\n*ID:* \`${admin.adminId}\`\n*Role:* ${isSA ? '⭐ Super Admin' : '👤 Admin'}\n*Your Link:*\n${WEBHOOK_URL}?admin=${admin.adminId}\n\n/mylink /stats /pending /myinfo\n/addmatch /unlock /clearmatches /pay\n/addwin MATCH|PICK|ODDS|WIN\n/wins /deletelastwin /clearwins`;
+            if (isSA) msg2 += `\n\n*Super Admin Only:*\n/addadmin NAME|EMAIL|CHATID\n/addadminid ADMINID|NAME|EMAIL|CHATID\n/pauseadmin ADMINID\n/unpauseadmin ADMINID\n/removeadmin ADMINID\n/admins\n/send ADMINID msg\n/broadcast msg`;
+            bot.sendMessage(chatId, msg2, { parse_mode: 'Markdown' });
+        } catch(e) { console.error('/start error:', e.message); }
     });
 
     bot.onText(/\/mylink/, (msg) => {
@@ -330,13 +349,16 @@ function setupCommandHandlers() {
     });
 
     bot.on('photo', async (msg) => {
-        const chatId = msg.chat.id; const admin = getAdminByChatId(chatId);
-        if (!admin || !isAdminActive(chatId)) return;
         try {
+            const chatId = msg.chat.id; const admin = getAdminByChatId(chatId);
+            if (!admin || !isAdminActive(chatId)) return;
             const url = await bot.getFileLink(msg.photo[msg.photo.length-1].file_id);
             await saveProofImage({ url, date: new Date(), caption: msg.caption || 'Win Proof', uploadedBy: admin.name });
             bot.sendMessage(chatId, `✅ *PROOF UPLOADED!*\n📸 "${msg.caption||'Win Proof'}"\n👤 By: ${admin.name}\n🌐 Live on website! 💾 Saved to DB!`, { parse_mode: 'Markdown' });
-        } catch(e) { bot.sendMessage(chatId, `❌ Upload failed: ${e.message}`); }
+        } catch(e) {
+            console.error('photo handler error:', e.message);
+            try { bot.sendMessage(msg.chat.id, `❌ Upload failed: ${e.message}`); } catch(_) {}
+        }
     });
 
     // ── SUPER ADMIN COMMANDS ──
@@ -641,6 +663,17 @@ async function start() {
 
 start().catch(e => { console.error('❌ Fatal:', e.message); process.exit(1); });
 
-process.on('SIGTERM', async () => { await bot.deleteWebHook().catch(()=>{}); await closeDatabase().catch(()=>{}); process.exit(0); });
-process.on('unhandledRejection', (e) => console.error('Unhandled:', e?.message));
-process.on('uncaughtException',  (e) => console.error('Uncaught:', e?.message));
+process.on('SIGTERM', async () => {
+    console.log('SIGTERM received, shutting down...');
+    await bot.deleteWebHook().catch(()=>{});
+    await closeDatabase().catch(()=>{});
+    process.exit(0);
+});
+process.on('unhandledRejection', (reason, promise) => {
+    console.error('❌ UnhandledRejection:', reason?.message || reason);
+    // Don't crash - just log
+});
+process.on('uncaughtException', (e) => {
+    console.error('❌ UncaughtException:', e.message, e.stack);
+    // Don't crash - just log
+});
