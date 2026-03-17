@@ -82,6 +82,22 @@ async function getPaymentsByAdmin(adminId) {
     return _db.collection('payments').find({ adminId }).toArray();
 }
 
+// Win History
+async function saveWin(data) {
+    return _db.collection('wins').insertOne(data);
+}
+async function getWins(limit = 30) {
+    return _db.collection('wins').find({}).sort({ date: -1 }).limit(limit).toArray();
+}
+async function deleteLastWin() {
+    const last = await _db.collection('wins').findOne({}, { sort: { date: -1 } });
+    if (last) await _db.collection('wins').deleteOne({ _id: last._id });
+    return last;
+}
+async function clearWins() {
+    return _db.collection('wins').deleteMany({});
+}
+
 // ══════════════════════════════════════
 // CONFIG
 // ══════════════════════════════════════
@@ -176,7 +192,7 @@ function setupCommandHandlers() {
             return bot.sendMessage(chatId, `🚫 *ACCESS PAUSED*\n\nContact super admin.\n*Your ID:* \`${admin.adminId}\``, { parse_mode: 'Markdown' });
         }
         const isSA = admin.adminId === 'ADMIN001';
-        let msg2 = `👑 *Welcome ${admin.name}!*\n\n*ID:* \`${admin.adminId}\`\n*Role:* ${isSA ? '⭐ Super Admin' : '👤 Admin'}\n*Your Link:*\n${WEBHOOK_URL}?admin=${admin.adminId}\n\n/mylink /stats /pending /myinfo\n/addmatch /unlock /clearmatches /pay`;
+        let msg2 = `👑 *Welcome ${admin.name}!*\n\n*ID:* \`${admin.adminId}\`\n*Role:* ${isSA ? '⭐ Super Admin' : '👤 Admin'}\n*Your Link:*\n${WEBHOOK_URL}?admin=${admin.adminId}\n\n/mylink /stats /pending /myinfo\n/addmatch /unlock /clearmatches /pay\n/addwin MATCH|PICK|ODDS|WIN — add win history\n/wins — view win history`;
         if (isSA) msg2 += `\n\n*Super Admin Only:*\n/addadmin NAME|EMAIL|CHATID\n/addadminid ADMINID|NAME|EMAIL|CHATID\n/pauseadmin ADMINID\n/unpauseadmin ADMINID\n/removeadmin ADMINID\n/admins\n/send ADMINID msg\n/broadcast msg`;
         bot.sendMessage(chatId, msg2, { parse_mode: 'Markdown' });
     });
@@ -265,6 +281,52 @@ function setupCommandHandlers() {
             console.error('❌ /pay error:', e.message);
             bot.sendMessage(chatId, `❌ Error: ${e.message}`);
         }
+    });
+
+    // /addwin MATCH | PICK | ODDS | WIN or LOSS
+    bot.onText(/\/addwin (.+)/, async (msg, match) => {
+        const chatId = msg.chat.id; const admin = getAdminByChatId(chatId);
+        if (!admin || !isAdminActive(chatId)) return bot.sendMessage(chatId, '❌ Not authorized.');
+        const p = match[1].split('|').map(s => s.trim());
+        if (p.length < 4) {
+            return bot.sendMessage(chatId,
+                '❌ Use:\n/addwin MATCH | PICK | ODDS | WIN or LOSS\n\nExample:\n/addwin Man Utd vs Chelsea | Man Utd Win | 2.10 | WIN'
+            );
+        }
+        const [match2, pick, odds, result] = p;
+        const isWin = result.toUpperCase().includes('WIN');
+        await saveWin({ match: match2, pick, odds, result: isWin ? 'WIN' : 'LOSS', date: new Date(), addedBy: admin.name });
+        bot.sendMessage(chatId, `${isWin ? '✅' : '❌'} *WIN HISTORY UPDATED*\n\n⚽ ${match2}\n🎯 Pick: ${pick}\n📊 Odds: ${odds}\n${isWin ? '✅ WIN' : '❌ LOSS'}\n\n🌐 Live on website!`, { parse_mode: 'Markdown' });
+    });
+
+    // /wins — list recent wins
+    bot.onText(/\/wins/, async (msg) => {
+        const chatId = msg.chat.id; const admin = getAdminByChatId(chatId);
+        if (!admin || !isAdminActive(chatId)) return bot.sendMessage(chatId, '❌ Not authorized.');
+        const wins = await getWins(10);
+        if (wins.length === 0) return bot.sendMessage(chatId, '📊 No win history yet. Use /addwin to add.');
+        let msg2 = `🏆 *WIN HISTORY (last ${wins.length})*\n\n`;
+        wins.forEach((w, i) => {
+            msg2 += `${i+1}. ${w.result === 'WIN' ? '✅' : '❌'} ${w.match}\n   Pick: ${w.pick} | Odds: ${w.odds}\n   ${new Date(w.date).toLocaleDateString()}\n\n`;
+        });
+        bot.sendMessage(chatId, msg2, { parse_mode: 'Markdown' });
+    });
+
+    // /deletelastwin — remove last win entry
+    bot.onText(/\/deletelastwin/, async (msg) => {
+        const chatId = msg.chat.id; const admin = getAdminByChatId(chatId);
+        if (!admin || admin.adminId !== 'ADMIN001') return bot.sendMessage(chatId, '❌ Only super admin.');
+        const deleted = await deleteLastWin();
+        if (!deleted) return bot.sendMessage(chatId, '⚠️ No win history to delete.');
+        bot.sendMessage(chatId, `🗑️ Deleted: ${deleted.match} — ${deleted.pick}`);
+    });
+
+    // /clearwins — wipe all win history
+    bot.onText(/\/clearwins/, async (msg) => {
+        const chatId = msg.chat.id; const admin = getAdminByChatId(chatId);
+        if (!admin || admin.adminId !== 'ADMIN001') return bot.sendMessage(chatId, '❌ Only super admin.');
+        const r = await clearWins();
+        bot.sendMessage(chatId, `🗑️ Cleared ${r.deletedCount} win history entries.`);
     });
 
     bot.on('photo', async (msg) => {
@@ -422,6 +484,13 @@ app.get('/api/odds', async (req, res) => {
     } catch(e) { res.json({ odds: [] }); }
 });
 
+app.get('/api/wins', async (req, res) => {
+    try {
+        const wins = await getWins(30);
+        res.json({ wins });
+    } catch(e) { res.json({ wins: [] }); }
+});
+
 app.get('/api/proof-images', async (req, res) => {
     try {
         const images = await getProofImages(30);
@@ -541,25 +610,35 @@ async function start() {
         console.log(`💓 Alive | Admins: ${adminCache.size}`);
     }, 14 * 60 * 1000);
 
-    // Auto-fix webhook every 5 minutes to prevent conflicts
+    // Auto-fix webhook every 3 minutes + self-ping to prevent sleep
+    const expectedWebhook = `${WEBHOOK_URL}/telegram-webhook`;
     setInterval(async () => {
         try {
+            // Self-ping to prevent Render free tier sleep
+            await fetch(`${WEBHOOK_URL}/health`).catch(()=>{});
+
+            // Check and restore webhook if lost
             const info = await bot.getWebHookInfo();
-            const expected = `${WEBHOOK_URL}/telegram-webhook`;
-            if (info.url !== expected) {
+            if (info.url !== expectedWebhook) {
                 console.log('⚠️ Webhook lost! Re-setting...');
-                await bot.setWebHook(expected, { allowed_updates: ['message', 'callback_query'] });
+                await bot.deleteWebHook();
+                await new Promise(r => setTimeout(r, 500));
+                await bot.setWebHook(expectedWebhook, {
+                    drop_pending_updates: false,
+                    max_connections: 40,
+                    allowed_updates: ['message', 'callback_query']
+                });
                 console.log('✅ Webhook restored!');
             }
             if (info.last_error_message) {
-                console.log(`⚠️ Webhook last error: ${info.last_error_message}`);
+                console.log(`⚠️ Webhook error: ${info.last_error_message}`);
             }
         } catch(e) { console.error('Webhook check error:', e.message); }
-    }, 5 * 60 * 1000);
+    }, 3 * 60 * 1000);
 }
 
 start().catch(e => { console.error('❌ Fatal:', e.message); process.exit(1); });
 
 process.on('SIGTERM', async () => { await bot.deleteWebHook().catch(()=>{}); await closeDatabase().catch(()=>{}); process.exit(0); });
 process.on('unhandledRejection', (e) => console.error('Unhandled:', e?.message));
-process.on('uncaughtException',  (e) => console.error('Uncaught:', e?.message));s
+process.on('uncaughtException',  (e) => console.error('Uncaught:', e?.message));
