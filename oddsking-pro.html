@@ -888,6 +888,10 @@ async function submitPaymentRequest() {
   const reqId = 'PAY-' + Date.now();
   payData.reqId = reqId;
 
+  // Show req ID immediately
+  const el = document.getElementById('reqIdDisplay');
+  if (el) el.textContent = reqId;
+
   try {
     const res = await fetch('/api/payment-request', {
       method:  'POST',
@@ -900,35 +904,66 @@ async function submitPaymentRequest() {
         adminId:   currentAdmin
       })
     });
+
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      console.error('Payment request failed:', err);
+      showPayError(err.message || 'Server error. Please try again.');
+      return;
+    }
+
     const data = await res.json();
+    console.log('Payment request response:', data);
+
     if (data.success) {
-      const el = document.getElementById('reqIdDisplay');
-      if (el) el.textContent = reqId;
+      const el2 = document.getElementById('reqIdDisplay');
+      if (el2) el2.textContent = reqId;
       startPolling(reqId);
     } else {
-      alert('Failed to send request. Please try again.');
-      closePayModal();
+      showPayError(data.message || 'Failed to send request. Please try again.');
     }
   } catch (e) {
-    alert('Connection error. Please try again.');
-    closePayModal();
+    console.error('Payment request error:', e);
+    showPayError('Connection error. Please check your internet and try again.');
   }
+}
+
+function showPayError(msg) {
+  const body = document.getElementById('modalBody');
+  body.innerHTML = `
+    <div style="text-align:center;padding:20px">
+      <div style="font-size:48px;margin-bottom:12px">❌</div>
+      <h4 style="color:var(--red);margin-bottom:8px">Request Failed</h4>
+      <p style="font-size:14px;color:var(--text-soft);margin-bottom:20px">${msg}</p>
+      <button class="btn-next" onclick="currentStep=3;renderStep()">← Try Again</button>
+    </div>`;
 }
 
 function startPolling(reqId) {
   let attempts = 0;
   pollInterval = setInterval(async () => {
     attempts++;
+    // Update waiting dots animation
+    const waitMsg = document.querySelector('.waiting-screen p');
+    if (waitMsg) {
+      const dots = '.'.repeat((attempts % 3) + 1);
+      waitMsg.innerHTML = `Your request has been sent.<br>Admin will provide payment instructions${dots}`;
+    }
+
     if (attempts > 120) { // 6 minutes max
       clearInterval(pollInterval);
+      const body = document.getElementById('modalBody');
+      if (body) body.innerHTML += `<p style="color:var(--red);text-align:center;margin-top:12px;font-size:13px">⚠️ Taking longer than usual. Please contact support with ID: <b>${reqId}</b></p>`;
       return;
     }
+
     try {
-      const res  = await fetch(`/api/payment-status/${reqId}`);
+      const res  = await fetch('/api/payment-status/' + reqId);
       const data = await res.json();
       if (data.status === 'ready' || data.status === 'declined') {
         clearInterval(pollInterval);
-        payData.instructions = data.instructions;
+        pollInterval = null;
+        payData.instructions = data.instructions || 'Request declined. Please contact support.';
         currentStep = 5;
         renderStep();
       }
