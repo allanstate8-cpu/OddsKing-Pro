@@ -1,0 +1,106 @@
+const { MongoClient } = require('mongodb');
+
+let db = null;
+
+async function connectDatabase() {
+    const uri = process.env.MONGODB_URI;
+    if (!uri) throw new Error('MONGODB_URI not set!');
+    const client = new MongoClient(uri);
+    await client.connect();
+    db = client.db('oddsking');
+    console.log('✅ MongoDB connected — database: oddsking');
+    return db;
+}
+
+// ── ADMINS ──
+async function saveAdmin(data) {
+    return db.collection('admins').updateOne(
+        { adminId: data.adminId },
+        { $set: data },
+        { upsert: true }
+    );
+}
+
+async function getAdmin(adminId) {
+    return db.collection('admins').findOne({ adminId });
+}
+
+async function getAllAdmins() {
+    return db.collection('admins').find({}).toArray();
+}
+
+async function getActiveAdmins() {
+    return db.collection('admins').find({ status: 'active' }).toArray();
+}
+
+async function updateAdmin(adminId, updates) {
+    return db.collection('admins').updateOne({ adminId }, { $set: updates });
+}
+
+async function deleteAdmin(adminId) {
+    return db.collection('admins').deleteOne({ adminId });
+}
+
+// ── ODDS ──
+async function saveMatch(data) {
+    return db.collection('odds').insertOne(data);
+}
+
+async function getTodayOdds() {
+    const start = new Date(); start.setHours(0,0,0,0);
+    const end   = new Date(); end.setHours(23,59,59,999);
+    return db.collection('odds').find({ date: { $gte: start, $lte: end } }).toArray();
+}
+
+async function updateMatch(matchId, updates) {
+    const { ObjectId } = require('mongodb');
+    return db.collection('odds').updateOne({ _id: new ObjectId(matchId) }, { $set: updates });
+}
+
+async function clearTodayOdds() {
+    const start = new Date(); start.setHours(0,0,0,0);
+    const end   = new Date(); end.setHours(23,59,59,999);
+    return db.collection('odds').deleteMany({ date: { $gte: start, $lte: end } });
+}
+
+// ── PROOF IMAGES ──
+async function saveProofImage(data) {
+    return db.collection('proofs').insertOne(data);
+}
+
+async function getProofImages(limit = 30) {
+    return db.collection('proofs').find({}).sort({ date: -1 }).limit(limit).toArray();
+}
+
+// ── PAYMENT REQUESTS ──
+async function savePaymentRequest(data) {
+    return db.collection('payments').updateOne(
+        { requestId: data.requestId },
+        { $set: data },
+        { upsert: true }
+    );
+}
+
+async function getPaymentRequest(requestId) {
+    return db.collection('payments').findOne({ requestId });
+}
+
+async function updatePaymentRequest(requestId, updates) {
+    return db.collection('payments').updateOne({ requestId }, { $set: updates });
+}
+
+async function getPaymentsByAdmin(adminId) {
+    return db.collection('payments').find({ adminId }).toArray();
+}
+
+async function closeDatabase() {
+    if (db) await db.client.close();
+}
+
+module.exports = {
+    connectDatabase, closeDatabase,
+    saveAdmin, getAdmin, getAllAdmins, getActiveAdmins, updateAdmin, deleteAdmin,
+    saveMatch, getTodayOdds, updateMatch, clearTodayOdds,
+    saveProofImage, getProofImages,
+    savePaymentRequest, getPaymentRequest, updatePaymentRequest, getPaymentsByAdmin
+};
