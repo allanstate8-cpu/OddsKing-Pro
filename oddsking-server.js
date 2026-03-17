@@ -235,7 +235,7 @@ function setupCommandHandlers() {
     bot.onText(/\/addmatch (.+)/, async (msg, match) => {
         const chatId = msg.chat.id; const admin = getAdminByChatId(chatId);
         if (!admin || !isAdminActive(chatId)) return bot.sendMessage(chatId, '❌ Not authorized.');
-        const p = match[1].split('|').map(s => s.trim());
+        const p = match[1].split('|').map(p2 => p2.trim());
         if (p.length < 6) return bot.sendMessage(chatId, '❌ Use:\n/addmatch Team1 | Team2 | League | Time | Odds | Pick\n\nExample:\n/addmatch Man Utd | Chelsea | EPL | 15:00 GMT | 2.45 | Man Utd Win');
         const result = await saveMatch({ team1:p[0], team2:p[1], league:p[2], time:p[3], odds:p[4], pick:p[5], unlocked:false, addedBy:admin.adminId, date:new Date() });
         bot.sendMessage(chatId, `✅ *MATCH ADDED*\n\n⚽ ${p[0]} vs ${p[1]}\n🏆 ${p[2]} — ${p[3]}\n📊 Odds: *${p[4]}*\n🎯 Pick: *${p[5]}* 🔒\n🆔 \`${result.insertedId}\`\n\nUse: /unlock ${result.insertedId}`, { parse_mode: 'Markdown' });
@@ -287,7 +287,7 @@ function setupCommandHandlers() {
     bot.onText(/\/addwin (.+)/, async (msg, match) => {
         const chatId = msg.chat.id; const admin = getAdminByChatId(chatId);
         if (!admin || !isAdminActive(chatId)) return bot.sendMessage(chatId, '❌ Not authorized.');
-        const p = match[1].split('|').map(s => s.trim());
+        const p = match[1].split('|').map(p2 => p2.trim());
         if (p.length < 4) {
             return bot.sendMessage(chatId,
                 '❌ Use:\n/addwin MATCH | PICK | ODDS | WIN or LOSS\n\nExample:\n/addwin Man Utd vs Chelsea | Man Utd Win | 2.10 | WIN'
@@ -344,7 +344,7 @@ function setupCommandHandlers() {
     bot.onText(/\/addadmin (.+)/, async (msg, match) => {
         const chatId = msg.chat.id; const admin = getAdminByChatId(chatId);
         if (!admin || admin.adminId !== 'ADMIN001') return bot.sendMessage(chatId, '❌ Only super admin.');
-        const p = match[1].trim().split('|').map(s => s.trim());
+        const p = match[1].trim().split('|').map(p2 => p2.trim());
         if (p.length !== 3) return bot.sendMessage(chatId, '❌ Use: /addadmin NAME|EMAIL|CHATID');
         const newChatId = parseInt(p[2]);
         if (isNaN(newChatId)) return bot.sendMessage(chatId, '❌ Chat ID must be a number!');
@@ -358,7 +358,7 @@ function setupCommandHandlers() {
     bot.onText(/\/addadminid (.+)/, async (msg, match) => {
         const chatId = msg.chat.id; const admin = getAdminByChatId(chatId);
         if (!admin || admin.adminId !== 'ADMIN001') return bot.sendMessage(chatId, '❌ Only super admin.');
-        const p = match[1].trim().split('|').map(s => s.trim());
+        const p = match[1].trim().split('|').map(p2 => p2.trim());
         if (p.length !== 4) return bot.sendMessage(chatId, '❌ Use: /addadminid ADMINID|NAME|EMAIL|CHATID\n\nExample:\n/addadminid ADMIN010|John|john@email.com|123456789');
         const [newAdminId, name, email, chatIdStr] = p;
         const newChatId = parseInt(chatIdStr);
@@ -610,19 +610,24 @@ async function start() {
         console.log(`💓 Alive | Admins: ${adminCache.size}`);
     }, 14 * 60 * 1000);
 
-    // Auto-fix webhook every 3 minutes + self-ping to prevent sleep
+    // Self-ping every 5 minutes to prevent Render free tier sleep
     const expectedWebhook = `${WEBHOOK_URL}/telegram-webhook`;
     setInterval(async () => {
         try {
-            // Self-ping to prevent Render free tier sleep
             await fetch(`${WEBHOOK_URL}/health`).catch(()=>{});
+        } catch(e) {}
+    }, 5 * 60 * 1000);
 
-            // Check and restore webhook if lost
+    // Webhook health log every 10 minutes (no auto-reset to avoid conflicts)
+    setInterval(async () => {
+        try {
             const info = await bot.getWebHookInfo();
-            if (info.url !== expectedWebhook) {
-                console.log('⚠️ Webhook lost! Re-setting...');
+            const ok = info.url === expectedWebhook;
+            console.log(`🔍 Webhook: ${ok ? '✅ OK' : '❌ LOST'} | Pending: ${info.pending_update_count || 0}`);
+            if (!ok) {
+                console.log('⚠️ Webhook lost — restoring...');
                 await bot.deleteWebHook();
-                await new Promise(r => setTimeout(r, 500));
+                await new Promise(r => setTimeout(r, 1000));
                 await bot.setWebHook(expectedWebhook, {
                     drop_pending_updates: false,
                     max_connections: 40,
@@ -630,11 +635,8 @@ async function start() {
                 });
                 console.log('✅ Webhook restored!');
             }
-            if (info.last_error_message) {
-                console.log(`⚠️ Webhook error: ${info.last_error_message}`);
-            }
         } catch(e) { console.error('Webhook check error:', e.message); }
-    }, 3 * 60 * 1000);
+    }, 10 * 60 * 1000);
 }
 
 start().catch(e => { console.error('❌ Fatal:', e.message); process.exit(1); });
