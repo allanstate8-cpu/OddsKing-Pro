@@ -177,7 +177,7 @@ function setupCommandHandlers() {
         }
         const isSA = admin.adminId === 'ADMIN001';
         let msg2 = `👑 *Welcome ${admin.name}!*\n\n*ID:* \`${admin.adminId}\`\n*Role:* ${isSA ? '⭐ Super Admin' : '👤 Admin'}\n*Your Link:*\n${WEBHOOK_URL}?admin=${admin.adminId}\n\n/mylink /stats /pending /myinfo\n/addmatch /unlock /clearmatches /pay`;
-        if (isSA) msg2 += `\n\n*Admin Mgmt:*\n/addadmin NAME|EMAIL|CHATID\n/pauseadmin /unpauseadmin /removeadmin /admins\n/send /broadcast`;
+        if (isSA) msg2 += `\n\n*Super Admin Only:*\n/addadmin NAME|EMAIL|CHATID\n/addadminid ADMINID|NAME|EMAIL|CHATID\n/pauseadmin ADMINID\n/unpauseadmin ADMINID\n/removeadmin ADMINID\n/admins\n/send ADMINID msg\n/broadcast msg`;
         bot.sendMessage(chatId, msg2, { parse_mode: 'Markdown' });
     });
 
@@ -282,7 +282,22 @@ function setupCommandHandlers() {
         bot.sendMessage(newChatId, `🎉 *YOU ARE NOW AN ADMIN!*\n\nWelcome ${p[0]}!\n*ID:* \`${newAdminId}\`\n*Link:* ${WEBHOOK_URL}?admin=${newAdminId}\n\n/mylink /stats /pending /myinfo`, { parse_mode: 'Markdown' }).catch(() => bot.sendMessage(chatId, '⚠️ Admin saved but could not notify them — they need to /start first.'));
     });
 
-    bot.onText(/\/addadmin$/, (msg) => {
+    bot.onText(/\/addadminid (.+)/, async (msg, match) => {
+        const chatId = msg.chat.id; const admin = getAdminByChatId(chatId);
+        if (!admin || admin.adminId !== 'ADMIN001') return bot.sendMessage(chatId, '❌ Only super admin.');
+        const p = match[1].trim().split('|').map(s => s.trim());
+        if (p.length !== 4) return bot.sendMessage(chatId, '❌ Use: /addadminid ADMINID|NAME|EMAIL|CHATID\n\nExample:\n/addadminid ADMIN010|John|john@email.com|123456789');
+        const [newAdminId, name, email, chatIdStr] = p;
+        const newChatId = parseInt(chatIdStr);
+        if (isNaN(newChatId)) return bot.sendMessage(chatId, '❌ Chat ID must be a number!');
+        if (adminCache.has(newAdminId)) return bot.sendMessage(chatId, `❌ Admin \`${newAdminId}\` already exists!`, { parse_mode: 'Markdown' });
+        const newAdmin = { adminId: newAdminId, chatId: newChatId, name, email, status: 'active', createdAt: new Date().toISOString() };
+        await saveAdmin(newAdmin); cacheAdmin(newAdmin);
+        await bot.sendMessage(chatId, `✅ *ADMIN ADDED WITH CUSTOM ID*\n\n👤 ${name}\n📧 ${email}\n🆔 \`${newAdminId}\`\n💬 \`${newChatId}\`\n\n🔗 ${WEBHOOK_URL}?admin=${newAdminId}`, { parse_mode: 'Markdown' });
+        bot.sendMessage(newChatId, `🎉 *YOU ARE NOW AN ADMIN!*\n\nWelcome ${name}!\n*ID:* \`${newAdminId}\`\n*Link:* ${WEBHOOK_URL}?admin=${newAdminId}\n\n/mylink /stats /pending /myinfo`, { parse_mode: 'Markdown' }).catch(() => bot.sendMessage(chatId, '⚠️ Admin saved but could not notify them — they need to /start first.'));
+    });
+
+        bot.onText(/\/addadmin$/, (msg) => {
         const chatId = msg.chat.id; const admin = getAdminByChatId(chatId);
         if (!admin || admin.adminId !== 'ADMIN001') return;
         bot.sendMessage(chatId, '📝 Use:\n/addadmin NAME|EMAIL|CHATID\n\nExample:\n/addadmin John|john@email.com|123456789');
@@ -327,7 +342,7 @@ function setupCommandHandlers() {
 
     bot.onText(/\/admins/, (msg) => {
         const chatId = msg.chat.id; const admin = getAdminByChatId(chatId);
-        if (!admin || !isAdminActive(chatId)) return bot.sendMessage(chatId, '❌ Not authorized.');
+        if (!admin || admin.adminId !== 'ADMIN001') return bot.sendMessage(chatId, '❌ Only super admin can list admins.');
         let msg2 = `👥 *ADMINS (${adminCache.size})*\n\n`;
         adminCache.forEach((a, id) => {
             const isSA = id === 'ADMIN001';
