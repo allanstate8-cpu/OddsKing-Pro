@@ -990,6 +990,43 @@ document.getElementById('payModal').addEventListener('click', function(e) {
 // ══════════════════════════════════════
 // INIT — load everything on page load
 // ══════════════════════════════════════
+// ══════════════════════════════════════
+// WIN HISTORY
+// ══════════════════════════════════════
+async function loadWinHistory() {
+  const tbody = document.getElementById('historyBody');
+  if (!tbody) return;
+  try {
+    const res  = await fetch('/api/wins');
+    const data = await res.json();
+    const wins = data.wins || [];
+
+    if (wins.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--gray)">No win history yet — admin updates this daily.</td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = wins.map(w => {
+      const isWin = w.result === 'WIN';
+      const d     = new Date(w.date);
+      return `
+        <tr>
+          <td style="font-weight:600;color:var(--text-soft)">${fmt(d)}</td>
+          <td style="font-weight:600">${w.match}</td>
+          <td>${w.pick}</td>
+          <td><b style="color:var(--green)">${w.odds}</b></td>
+          <td>${isWin
+            ? `<span class="win-badge">✅ WIN</span>`
+            : `<span style="background:#fde;color:#c00;border-radius:6px;padding:3px 10px;font-size:12px;font-weight:700">❌ LOSS</span>`
+          }</td>
+        </tr>`;
+    }).join('');
+  } catch(e) {
+    console.error('loadWinHistory error:', e);
+    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--gray)">Could not load win history.</td></tr>`;
+  }
+}
+
 window.addEventListener('DOMContentLoaded', () => {
   loadProofImages();
   loadOdds();
