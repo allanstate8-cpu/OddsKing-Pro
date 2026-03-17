@@ -570,41 +570,7 @@
   <div class="section-title">📸 Proof of Wins</div>
   <div class="section-sub">Real screenshots — updated by admin every day</div>
 
-  <div class="proof-grid" id="proofGrid">
-    <!-- Today's proof -->
-    <div class="proof-card" onclick="openImgModal(this)">
-      <div class="proof-img-placeholder">
-        <span class="icon">📷</span>
-        <span>Today's proof</span>
-        <span style="font-size:10px;color:#aaa">Admin uploads daily</span>
-      </div>
-      <div class="proof-meta">
-        <span class="proof-date" id="todayDate"></span>
-        <span class="proof-badge today">TODAY</span>
-      </div>
-    </div>
-    <!-- Past proofs (placeholders) -->
-    <div class="proof-card" onclick="openImgModal(this)">
-      <div class="proof-img-placeholder"><span class="icon">✅</span><span>Win proof</span></div>
-      <div class="proof-meta"><span class="proof-date" id="d1"></span><span class="proof-badge">WIN</span></div>
-    </div>
-    <div class="proof-card" onclick="openImgModal(this)">
-      <div class="proof-img-placeholder"><span class="icon">✅</span><span>Win proof</span></div>
-      <div class="proof-meta"><span class="proof-date" id="d2"></span><span class="proof-badge">WIN</span></div>
-    </div>
-    <div class="proof-card" onclick="openImgModal(this)">
-      <div class="proof-img-placeholder"><span class="icon">✅</span><span>Win proof</span></div>
-      <div class="proof-meta"><span class="proof-date" id="d3"></span><span class="proof-badge">WIN</span></div>
-    </div>
-    <div class="proof-card" onclick="openImgModal(this)">
-      <div class="proof-img-placeholder"><span class="icon">✅</span><span>Win proof</span></div>
-      <div class="proof-meta"><span class="proof-date" id="d4"></span><span class="proof-badge">WIN</span></div>
-    </div>
-    <div class="proof-card" onclick="openImgModal(this)">
-      <div class="proof-img-placeholder"><span class="icon">✅</span><span>Win proof</span></div>
-      <div class="proof-meta"><span class="proof-date" id="d5"></span><span class="proof-badge">WIN</span></div>
-    </div>
-  </div>
+  <div class="proof-grid" id="proofGrid"><div style="padding:30px;color:var(--gray);text-align:center">Loading proof images...</div></div>
 </div>
 
 <!-- TODAY'S ODDS -->
@@ -617,85 +583,7 @@
     <div class="odds-date-badge" id="matchDate"></div>
   </div>
 
-  <!-- Match 1 -->
-  <div class="match-card" style="animation-delay:0.1s">
-    <div class="match-top">
-      <div class="match-league">🏴󠁧󠁢󠁥󠁮󠁧󠁿 Premier League</div>
-      <div class="match-time">⏰ 15:00 GMT</div>
-    </div>
-    <div class="match-teams">
-      <div class="team"><div class="team-flag">🔴</div><div class="team-name">Manchester United</div></div>
-      <div class="vs-badge">VS</div>
-      <div class="team"><div class="team-flag">🔵</div><div class="team-name">Chelsea FC</div></div>
-    </div>
-    <div class="match-bottom">
-      <div class="odds-info">
-        <span class="odds-label">Odds:</span>
-        <span class="odds-value">2.45</span>
-      </div>
-      <div class="pick-locked" onclick="openPayModal()">🔒 Unlock Pick</div>
-    </div>
-  </div>
-
-  <!-- Match 2 -->
-  <div class="match-card" style="animation-delay:0.2s">
-    <div class="match-top">
-      <div class="match-league">🇪🇸 La Liga</div>
-      <div class="match-time">⏰ 20:00 GMT</div>
-    </div>
-    <div class="match-teams">
-      <div class="team"><div class="team-flag">🔵🔴</div><div class="team-name">FC Barcelona</div></div>
-      <div class="vs-badge">VS</div>
-      <div class="team"><div class="team-flag">⚪</div><div class="team-name">Real Madrid</div></div>
-    </div>
-    <div class="match-bottom">
-      <div class="odds-info">
-        <span class="odds-label">Odds:</span>
-        <span class="odds-value">1.85</span>
-      </div>
-      <div class="pick-locked" onclick="openPayModal()">🔒 Unlock Pick</div>
-    </div>
-  </div>
-
-  <!-- Match 3 -->
-  <div class="match-card" style="animation-delay:0.3s">
-    <div class="match-top">
-      <div class="match-league">🇩🇪 Bundesliga</div>
-      <div class="match-time">⏰ 17:30 GMT</div>
-    </div>
-    <div class="match-teams">
-      <div class="team"><div class="team-flag">🔴</div><div class="team-name">Bayern Munich</div></div>
-      <div class="vs-badge">VS</div>
-      <div class="team"><div class="team-flag">🟡⚫</div><div class="team-name">Borussia Dortmund</div></div>
-    </div>
-    <div class="match-bottom">
-      <div class="odds-info">
-        <span class="odds-label">Odds:</span>
-        <span class="odds-value">3.10</span>
-      </div>
-      <div class="pick-locked" onclick="openPayModal()">🔒 Unlock Pick</div>
-    </div>
-  </div>
-
-  <!-- Match 4 -->
-  <div class="match-card" style="animation-delay:0.4s">
-    <div class="match-top">
-      <div class="match-league">🇮🇹 Serie A</div>
-      <div class="match-time">⏰ 19:45 GMT</div>
-    </div>
-    <div class="match-teams">
-      <div class="team"><div class="team-flag">⚫🔵</div><div class="team-name">Inter Milan</div></div>
-      <div class="vs-badge">VS</div>
-      <div class="team"><div class="team-flag">⚫🔴</div><div class="team-name">AC Milan</div></div>
-    </div>
-    <div class="match-bottom">
-      <div class="odds-info">
-        <span class="odds-label">Odds:</span>
-        <span class="odds-value">2.20</span>
-      </div>
-      <div class="pick-locked" onclick="openPayModal()">🔒 Unlock Pick</div>
-    </div>
-  </div>
+  <div id="matchesContainer"><div style="padding:30px;color:var(--gray);text-align:center">Loading matches...</div></div>
 </div>
 
 <!-- PAY NOW SECTION -->
@@ -760,64 +648,130 @@
 </div>
 
 <script>
-// ── Date Setup ──
+// ══════════════════════════════════════
+// DATE SETUP
+// ══════════════════════════════════════
 const today = new Date();
-const fmt = (d) => d.toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' });
+const fmt   = (d) => d.toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' });
+document.getElementById('matchDate').textContent = '📅 ' + fmt(today);
 
-document.getElementById('todayDate').textContent = fmt(today);
-document.getElementById('matchDate').textContent  = '📅 ' + fmt(today);
+// Get admin from URL
+const urlParams   = new URLSearchParams(window.location.search);
+const currentAdmin = urlParams.get('admin') || null;
 
-for (let i = 1; i <= 5; i++) {
-  const d = new Date(today); d.setDate(d.getDate() - i);
-  document.getElementById('d' + i).textContent = fmt(d);
+// ══════════════════════════════════════
+// FETCH & RENDER PROOF IMAGES
+// ══════════════════════════════════════
+async function loadProofImages() {
+  const grid = document.getElementById('proofGrid');
+  try {
+    const res    = await fetch('/api/proof-images');
+    const data   = await res.json();
+    const images = data.images || [];
+
+    if (images.length === 0) {
+      grid.innerHTML = `
+        <div class="proof-card">
+          <div class="proof-img-placeholder"><span class="icon">📷</span><span>No proof yet</span><span style="font-size:10px;color:#aaa">Admin uploads daily</span></div>
+          <div class="proof-meta"><span class="proof-date">${fmt(today)}</span><span class="proof-badge today">TODAY</span></div>
+        </div>`;
+      return;
+    }
+
+    grid.innerHTML = images.map((img, i) => {
+      const d     = new Date(img.date);
+      const isToday = d.toDateString() === today.toDateString();
+      return `
+        <div class="proof-card" onclick="openImgModal('${img.url}')">
+          <img class="proof-img" src="${img.url}" alt="${img.caption}" loading="lazy"
+               onerror="this.parentElement.querySelector('.proof-img-placeholder') && (this.style.display='none')">
+          <div class="proof-meta">
+            <span class="proof-date">${fmt(d)}</span>
+            <span class="proof-badge ${isToday ? 'today' : ''}">${isToday ? 'TODAY' : 'WIN'}</span>
+          </div>
+        </div>`;
+    }).join('');
+  } catch (e) {
+    grid.innerHTML = `<p style="color:var(--gray);padding:20px">Could not load proof images.</p>`;
+  }
 }
 
-// ── Win History Data ──
-const historyData = [
-  { match: 'Man Utd vs Arsenal',     pick: 'Man Utd Win',    odds: '2.10', win: true  },
-  { match: 'Barcelona vs Atletico',  pick: 'Over 2.5 Goals', odds: '1.75', win: true  },
-  { match: 'PSG vs Lyon',            pick: 'PSG Win',        odds: '1.60', win: true  },
-  { match: 'Liverpool vs City',      pick: 'Draw',           odds: '3.20', win: false },
-  { match: 'Juventus vs Roma',       pick: 'Juventus Win',   odds: '1.90', win: true  },
-  { match: 'Dortmund vs Leipzig',    pick: 'Over 2.5',       odds: '1.85', win: true  },
-  { match: 'Chelsea vs Spurs',       pick: 'Chelsea Win',    odds: '2.00', win: true  },
-];
+// ══════════════════════════════════════
+// FETCH & RENDER TODAY'S ODDS
+// ══════════════════════════════════════
+async function loadOdds() {
+  const container = document.getElementById('matchesContainer');
+  try {
+    const res  = await fetch('/api/odds');
+    const data = await res.json();
+    const odds = data.odds || [];
 
-const tbody = document.getElementById('historyBody');
-historyData.forEach((row, i) => {
-  const d = new Date(today); d.setDate(d.getDate() - i - 1);
-  tbody.innerHTML += `
-    <tr>
-      <td style="font-weight:600;color:var(--text-soft)">${fmt(d)}</td>
-      <td style="font-weight:600">${row.match}</td>
-      <td>${row.pick}</td>
-      <td><b style="color:var(--green)">${row.odds}</b></td>
-      <td>${row.win
-        ? `<span class="win-badge">✅ WIN</span>`
-        : `<span style="background:#fde;color:#c00;border-radius:6px;padding:3px 10px;font-size:12px;font-weight:700">❌ LOSS</span>`
-      }</td>
-    </tr>`;
-});
+    if (odds.length === 0) {
+      container.innerHTML = `
+        <div style="text-align:center;padding:40px;color:var(--gray)">
+          <div style="font-size:48px;margin-bottom:12px">⚽</div>
+          <div style="font-size:16px;font-weight:600">No matches added yet today</div>
+          <div style="font-size:13px;margin-top:6px">Check back soon!</div>
+        </div>`;
+      return;
+    }
 
-// ── Payment Countries & Methods ──
+    container.innerHTML = odds.map((m, i) => `
+      <div class="match-card" style="animation-delay:${i * 0.1}s">
+        <div class="match-top">
+          <div class="match-league">🏆 ${m.league}</div>
+          <div class="match-time">⏰ ${m.time}</div>
+        </div>
+        <div class="match-teams">
+          <div class="team"><div class="team-flag">⚽</div><div class="team-name">${m.team1}</div></div>
+          <div class="vs-badge">VS</div>
+          <div class="team"><div class="team-flag">⚽</div><div class="team-name">${m.team2}</div></div>
+        </div>
+        <div class="match-bottom">
+          <div class="odds-info">
+            <span class="odds-label">Odds:</span>
+            <span class="odds-value">${m.odds}</span>
+          </div>
+          ${m.unlocked && m.pick
+            ? `<div class="pick-unlocked">🏆 ${m.pick}</div>`
+            : `<div class="pick-locked" onclick="openPayModal()">🔒 Unlock Pick</div>`
+          }
+        </div>
+      </div>`).join('');
+  } catch (e) {
+    container.innerHTML = `<p style="color:var(--gray);padding:20px">Could not load matches.</p>`;
+  }
+}
+
+// Auto-refresh odds every 30 seconds (picks unlock live!)
+setInterval(loadOdds, 30000);
+
+// ══════════════════════════════════════
+// PAYMENT MODAL
+// ══════════════════════════════════════
 const paymentMethods = {
-  "Kenya":       ["M-Pesa", "Airtel Money"],
-  "Tanzania":    ["M-Pesa (Vodacom)", "Tigo Pesa", "Airtel Money", "Halotel"],
-  "Uganda":      ["MTN Mobile Money", "Airtel Money"],
-  "Ghana":       ["MTN MoMo", "Vodafone Cash", "AirtelTigo Money"],
-  "Nigeria":     ["Bank Transfer", "Opay", "Palmpay", "USSD"],
-  "Zimbabwe":    ["EcoCash", "OneMoney", "InnBucks"],
-  "Zambia":      ["MTN Money", "Airtel Money", "Zamtel Money"],
-  "South Africa":["SnapScan", "FNB eWallet", "MTN MoMo"],
-  "Ethiopia":    ["Telebirr", "CBE Birr"],
-  "Other":       ["Bank Transfer", "Western Union", "MoneyGram"],
+  "Kenya":        ["M-Pesa", "Airtel Money"],
+  "Tanzania":     ["M-Pesa (Vodacom)", "Tigo Pesa", "Airtel Money", "Halotel"],
+  "Uganda":       ["MTN Mobile Money", "Airtel Money"],
+  "Ghana":        ["MTN MoMo", "Vodafone Cash", "AirtelTigo Money"],
+  "Nigeria":      ["Bank Transfer", "Opay", "Palmpay", "USSD"],
+  "Zimbabwe":     ["EcoCash", "OneMoney", "InnBucks"],
+  "Zambia":       ["MTN Money", "Airtel Money", "Zamtel Money"],
+  "South Africa": ["SnapScan", "FNB eWallet", "MTN MoMo"],
+  "Ethiopia":     ["Telebirr", "CBE Birr"],
+  "Rwanda":       ["MTN MoMo", "Airtel Money"],
+  "Mozambique":   ["M-Pesa", "eMola"],
+  "Senegal":      ["Orange Money", "Wave", "Free Money"],
+  "Ivory Coast":  ["Orange Money", "MTN MoMo", "Wave"],
+  "Cameroon":     ["MTN MoMo", "Orange Money"],
+  "Egypt":        ["Vodafone Cash", "Orange Cash", "Etisalat Cash"],
+  "Other":        ["Bank Transfer", "Western Union", "MoneyGram"],
 };
 
-// Build country list
 const allCountries = Object.keys(paymentMethods);
-
 let currentStep = 1;
-let payData = {};
+let payData     = {};
+let pollInterval = null;
 
 function openPayModal() {
   currentStep = 1; payData = {};
@@ -826,13 +780,13 @@ function openPayModal() {
 }
 function closePayModal() {
   document.getElementById('payModal').classList.remove('open');
+  if (pollInterval) { clearInterval(pollInterval); pollInterval = null; }
 }
 
 function renderStep() {
-  const body = document.getElementById('modalBody');
+  const body  = document.getElementById('modalBody');
+  const steps = ['Country', 'Method', 'Confirm', 'Wait'];
 
-  // Step indicator
-  const steps = ['Country', 'Method', 'Confirm', 'Pay'];
   const stepsHtml = `
     <div class="step-indicator">
       ${steps.map((s, i) => `
@@ -880,7 +834,7 @@ function renderStep() {
         <div class="payment-detail-row"><span class="key">Phone</span><span class="val">${payData.phone}</span></div>
       </div>
       <p style="font-size:13px;color:var(--text-soft);margin-bottom:16px;text-align:center">
-        ✅ After confirming, the admin will send you payment instructions via this page.
+        After confirming, the admin will send you payment instructions instantly.
       </p>
       <button class="btn-next" onclick="step3Confirm()">✅ Confirm & Send Request</button>`;
   }
@@ -890,25 +844,26 @@ function renderStep() {
       <div class="waiting-screen">
         <div class="waiting-spinner"></div>
         <h4>Waiting for Admin...</h4>
-        <p>Your request has been sent.<br>The admin will provide payment instructions shortly.</p>
-        <div style="margin-top:20px;padding:16px;background:var(--green-pale);border-radius:12px;text-align:left">
-          <div style="font-size:12px;color:var(--green);font-weight:700;margin-bottom:8px">📋 YOUR REQUEST ID</div>
-          <div style="font-family:monospace;font-size:14px;font-weight:700;color:var(--text)" id="reqId">—</div>
+        <p>Your request has been sent.<br>Admin will provide payment instructions shortly.</p>
+        <div style="margin-top:16px;padding:14px;background:var(--green-pale);border-radius:12px;text-align:left">
+          <div style="font-size:11px;color:var(--green);font-weight:700;margin-bottom:6px">📋 REQUEST ID</div>
+          <div style="font-family:monospace;font-size:13px;font-weight:700;color:var(--text)" id="reqIdDisplay">—</div>
         </div>
       </div>`;
-    sendPaymentRequest();
+    submitPaymentRequest();
   }
 
   else if (currentStep === 5) {
     body.innerHTML = stepsHtml + `
       <div class="payment-details-box">
         <h4>💳 Payment Instructions</h4>
-        <div id="adminInstructions" style="font-size:15px;font-weight:600;color:var(--text);line-height:1.7"></div>
+        <div id="adminInstructions" style="font-size:15px;font-weight:600;color:var(--text);line-height:1.8;white-space:pre-wrap"></div>
       </div>
       <p style="font-size:13px;color:var(--text-soft);margin-bottom:16px;text-align:center">
-        ⚠️ After payment, the admin will confirm and unlock your picks.
+        ⚠️ After sending payment, all picks will be unlocked for you.
       </p>
-      <button class="btn-next" onclick="closePayModal()">✅ Got it!</button>`;
+      <button class="btn-next" onclick="closePayModal()">✅ Got it — Close</button>`;
+    document.getElementById('adminInstructions').textContent = payData.instructions;
   }
 }
 
@@ -929,69 +884,63 @@ function step3Confirm() {
   currentStep = 4; renderStep();
 }
 
-async function sendPaymentRequest() {
+async function submitPaymentRequest() {
   const reqId = 'PAY-' + Date.now();
-  document.getElementById('reqId').textContent = reqId;
+  payData.reqId = reqId;
 
   try {
-    // Send to backend
     const res = await fetch('/api/payment-request', {
-      method: 'POST',
+      method:  'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
+      body:    JSON.stringify({
         requestId: reqId,
         country:   payData.country,
         method:    payData.method,
         phone:     payData.phone,
-        timestamp: new Date().toISOString()
+        adminId:   currentAdmin
       })
     });
-
-    // Poll for admin response
-    pollForInstructions(reqId);
+    const data = await res.json();
+    if (data.success) {
+      const el = document.getElementById('reqIdDisplay');
+      if (el) el.textContent = reqId;
+      startPolling(reqId);
+    } else {
+      alert('Failed to send request. Please try again.');
+      closePayModal();
+    }
   } catch (e) {
-    // If no backend, just show demo
-    setTimeout(() => showDemoInstructions(), 3000);
+    alert('Connection error. Please try again.');
+    closePayModal();
   }
 }
 
-function pollForInstructions(reqId) {
+function startPolling(reqId) {
   let attempts = 0;
-  const interval = setInterval(async () => {
+  pollInterval = setInterval(async () => {
     attempts++;
-    if (attempts > 60) { clearInterval(interval); return; }
+    if (attempts > 120) { // 6 minutes max
+      clearInterval(pollInterval);
+      return;
+    }
     try {
       const res  = await fetch(`/api/payment-status/${reqId}`);
       const data = await res.json();
-      if (data.instructions) {
-        clearInterval(interval);
-        showInstructions(data.instructions);
+      if (data.status === 'ready' || data.status === 'declined') {
+        clearInterval(pollInterval);
+        payData.instructions = data.instructions;
+        currentStep = 5;
+        renderStep();
       }
     } catch (e) { /* keep polling */ }
   }, 3000);
 }
 
-function showDemoInstructions() {
-  if (currentStep !== 4) return;
-  currentStep = 5; renderStep();
-  document.getElementById('adminInstructions').innerHTML = `
-    Send <b>${payData.method}</b> payment to:<br><br>
-    📱 <b>+254 XXX XXX XXX</b><br>
-    💰 Amount: <b>KES 200 / Daily Tips</b><br><br>
-    After payment, reply here with your confirmation code.
-  `;
-}
-
-function showInstructions(text) {
-  currentStep = 5; renderStep();
-  document.getElementById('adminInstructions').innerHTML = text.replace(/\n/g, '<br>');
-}
-
-// ── Image Modal ──
-function openImgModal(card) {
-  const img = card.querySelector('img');
-  if (!img) return; // placeholder, no image yet
-  document.getElementById('imgModalSrc').src = img.src;
+// ══════════════════════════════════════
+// IMAGE MODAL
+// ══════════════════════════════════════
+function openImgModal(url) {
+  document.getElementById('imgModalSrc').src = url;
   document.getElementById('imgModal').classList.add('open');
 }
 function closeImgModal() {
@@ -1001,6 +950,14 @@ function closeImgModal() {
 // Close modals on overlay click
 document.getElementById('payModal').addEventListener('click', function(e) {
   if (e.target === this) closePayModal();
+});
+
+// ══════════════════════════════════════
+// INIT — load everything on page load
+// ══════════════════════════════════════
+window.addEventListener('DOMContentLoaded', () => {
+  loadProofImages();
+  loadOdds();
 });
 </script>
 </body>
