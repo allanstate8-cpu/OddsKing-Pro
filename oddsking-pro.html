@@ -171,6 +171,9 @@
     box-shadow: var(--shadow-lg);
     border-color: var(--green-light);
   }
+  .proof-card.no-image {
+    cursor: default;
+  }
   .proof-img {
     width: 100%; aspect-ratio: 4/3;
     object-fit: cover; display: block;
@@ -569,8 +572,9 @@
 <div class="section">
   <div class="section-title">📸 Proof of Wins</div>
   <div class="section-sub">Real screenshots — updated by admin every day</div>
-
-  <div class="proof-grid" id="proofGrid"><div style="padding:30px;color:var(--gray);text-align:center">Loading proof images...</div></div>
+  <div class="proof-grid" id="proofGrid">
+    <div style="padding:30px;color:var(--gray);text-align:center">Loading proof images...</div>
+  </div>
 </div>
 
 <!-- TODAY'S ODDS -->
@@ -582,8 +586,9 @@
     </div>
     <div class="odds-date-badge" id="matchDate"></div>
   </div>
-
-  <div id="matchesContainer"><div style="padding:30px;color:var(--gray);text-align:center">Loading matches...</div></div>
+  <div id="matchesContainer">
+    <div style="padding:30px;color:var(--gray);text-align:center">Loading matches...</div>
+  </div>
 </div>
 
 <!-- PAY NOW SECTION -->
@@ -656,7 +661,7 @@ const fmt   = (d) => d.toLocaleDateString('en-GB', { day:'2-digit', month:'short
 document.getElementById('matchDate').textContent = '📅 ' + fmt(today);
 
 // Get admin from URL
-const urlParams   = new URLSearchParams(window.location.search);
+const urlParams    = new URLSearchParams(window.location.search);
 const currentAdmin = urlParams.get('admin') || null;
 
 // ══════════════════════════════════════
@@ -671,26 +676,53 @@ async function loadProofImages() {
 
     if (images.length === 0) {
       grid.innerHTML = `
-        <div class="proof-card">
-          <div class="proof-img-placeholder"><span class="icon">📷</span><span>No proof yet</span><span style="font-size:10px;color:#aaa">Admin uploads daily</span></div>
-          <div class="proof-meta"><span class="proof-date">${fmt(today)}</span><span class="proof-badge today">TODAY</span></div>
+        <div class="proof-card no-image">
+          <div class="proof-img-placeholder">
+            <span class="icon">📷</span>
+            <span>No proof yet</span>
+            <span style="font-size:10px;color:#aaa">Admin uploads daily</span>
+          </div>
+          <div class="proof-meta">
+            <span class="proof-date">${fmt(today)}</span>
+            <span class="proof-badge today">TODAY</span>
+          </div>
         </div>`;
       return;
     }
 
-    grid.innerHTML = images.map((img, i) => {
-      const d     = new Date(img.date);
+    grid.innerHTML = images.map((img) => {
+      const d       = new Date(img.date);
       const isToday = d.toDateString() === today.toDateString();
+      const hasUrl  = img.url && img.url.length > 0;
+
+      // Escape the URL safely for use in onclick and src attributes
+      const safeUrl = hasUrl ? img.url.replace(/'/g, "\\'") : '';
+
       return `
-        <div class="proof-card" onclick="openImgModal('${img.url}')">
-          <img class="proof-img" src="${img.url}" alt="${img.caption}" loading="lazy"
-               onerror="this.parentElement.querySelector('.proof-img-placeholder') && (this.style.display='none')">
+        <div class="proof-card ${hasUrl ? '' : 'no-image'}" ${hasUrl ? `onclick="openImgModal('${safeUrl}')"` : ''}>
+          ${hasUrl
+            ? `<img
+                 class="proof-img"
+                 src="${img.url}"
+                 alt="${img.caption || 'Win Proof'}"
+                 loading="lazy"
+                 onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+               <div class="proof-img-placeholder" style="display:none;">
+                 <span class="icon">📷</span>
+                 <span>Image unavailable</span>
+               </div>`
+            : `<div class="proof-img-placeholder">
+                 <span class="icon">📷</span>
+                 <span>Loading...</span>
+               </div>`
+          }
           <div class="proof-meta">
             <span class="proof-date">${fmt(d)}</span>
             <span class="proof-badge ${isToday ? 'today' : ''}">${isToday ? 'TODAY' : 'WIN'}</span>
           </div>
         </div>`;
     }).join('');
+
   } catch (e) {
     grid.innerHTML = `<p style="color:var(--gray);padding:20px">Could not load proof images.</p>`;
   }
@@ -747,6 +779,43 @@ async function loadOdds() {
 setInterval(loadOdds, 30000);
 
 // ══════════════════════════════════════
+// WIN HISTORY
+// ══════════════════════════════════════
+async function loadWinHistory() {
+  const tbody = document.getElementById('historyBody');
+  if (!tbody) return;
+  try {
+    const res  = await fetch('/api/wins');
+    const data = await res.json();
+    const wins = data.wins || [];
+
+    if (wins.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--gray)">No win history yet — admin updates this daily.</td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = wins.map(w => {
+      const isWin = w.result === 'WIN';
+      const d     = new Date(w.date);
+      return `
+        <tr>
+          <td style="font-weight:600;color:var(--text-soft)">${fmt(d)}</td>
+          <td style="font-weight:600">${w.match}</td>
+          <td>${w.pick}</td>
+          <td><b style="color:var(--green)">${w.odds}</b></td>
+          <td>${isWin
+            ? `<span class="win-badge">✅ WIN</span>`
+            : `<span style="background:#fde;color:#c00;border-radius:6px;padding:3px 10px;font-size:12px;font-weight:700">❌ LOSS</span>`
+          }</td>
+        </tr>`;
+    }).join('');
+  } catch(e) {
+    console.error('loadWinHistory error:', e);
+    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--gray)">Could not load win history.</td></tr>`;
+  }
+}
+
+// ══════════════════════════════════════
 // PAYMENT MODAL
 // ══════════════════════════════════════
 const paymentMethods = {
@@ -769,8 +838,8 @@ const paymentMethods = {
 };
 
 const allCountries = Object.keys(paymentMethods);
-let currentStep = 1;
-let payData     = {};
+let currentStep  = 1;
+let payData      = {};
 let pollInterval = null;
 
 function openPayModal() {
@@ -990,43 +1059,6 @@ document.getElementById('payModal').addEventListener('click', function(e) {
 // ══════════════════════════════════════
 // INIT — load everything on page load
 // ══════════════════════════════════════
-// ══════════════════════════════════════
-// WIN HISTORY
-// ══════════════════════════════════════
-async function loadWinHistory() {
-  const tbody = document.getElementById('historyBody');
-  if (!tbody) return;
-  try {
-    const res  = await fetch('/api/wins');
-    const data = await res.json();
-    const wins = data.wins || [];
-
-    if (wins.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--gray)">No win history yet — admin updates this daily.</td></tr>`;
-      return;
-    }
-
-    tbody.innerHTML = wins.map(w => {
-      const isWin = w.result === 'WIN';
-      const d     = new Date(w.date);
-      return `
-        <tr>
-          <td style="font-weight:600;color:var(--text-soft)">${fmt(d)}</td>
-          <td style="font-weight:600">${w.match}</td>
-          <td>${w.pick}</td>
-          <td><b style="color:var(--green)">${w.odds}</b></td>
-          <td>${isWin
-            ? `<span class="win-badge">✅ WIN</span>`
-            : `<span style="background:#fde;color:#c00;border-radius:6px;padding:3px 10px;font-size:12px;font-weight:700">❌ LOSS</span>`
-          }</td>
-        </tr>`;
-    }).join('');
-  } catch(e) {
-    console.error('loadWinHistory error:', e);
-    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--gray)">Could not load win history.</td></tr>`;
-  }
-}
-
 window.addEventListener('DOMContentLoaded', () => {
   loadProofImages();
   loadOdds();
