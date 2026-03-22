@@ -56,8 +56,7 @@
   .logo-text {
     font-family: 'Bebas Neue', sans-serif;
     font-size: 28px; letter-spacing: 2px;
-    color: var(--green);
-    line-height: 1;
+    color: var(--green); line-height: 1;
   }
   .logo-text span { color: var(--gold); }
   .logo-tagline {
@@ -132,13 +131,26 @@
     font-size: 11px; color: rgba(255,255,255,0.6);
     text-transform: uppercase; letter-spacing: 1px; margin-top: 2px;
   }
-
   @keyframes fadeDown {
     from { opacity: 0; transform: translateY(-20px); }
     to   { opacity: 1; transform: translateY(0); }
   }
 
-  /* ── PROOF SECTION ── */
+  /* ── NO ADMIN BANNER ── */
+  .no-admin-banner {
+    background: #fff3cd;
+    border: 2px solid #ffc107;
+    border-radius: 14px;
+    padding: 20px 24px;
+    margin: 24px auto;
+    max-width: 600px;
+    text-align: center;
+    display: none;
+  }
+  .no-admin-banner h3 { color: #856404; margin-bottom: 6px; font-size: 17px; }
+  .no-admin-banner p  { color: #856404; font-size: 14px; }
+
+  /* ── SECTIONS ── */
   .section { max-width: 1100px; margin: 0 auto; padding: 40px 20px; }
   .section-title {
     font-family: 'Bebas Neue', sans-serif;
@@ -151,7 +163,7 @@
     margin-bottom: 24px;
   }
 
-  /* Proof Gallery */
+  /* ── PROOF GALLERY ── */
   .proof-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -171,9 +183,7 @@
     box-shadow: var(--shadow-lg);
     border-color: var(--green-light);
   }
-  .proof-card.no-image {
-    cursor: default;
-  }
+  .proof-card.no-image { cursor: default; }
   .proof-img {
     width: 100%; aspect-ratio: 4/3;
     object-fit: cover; display: block;
@@ -187,7 +197,7 @@
     gap: 8px; color: var(--green);
   }
   .proof-img-placeholder .icon { font-size: 36px; }
-  .proof-img-placeholder span { font-size: 12px; font-weight: 600; color: var(--gray); }
+  .proof-img-placeholder span  { font-size: 12px; font-weight: 600; color: var(--gray); }
   .proof-meta {
     padding: 12px 14px;
     display: flex; align-items: center; justify-content: space-between;
@@ -199,11 +209,9 @@
     border-radius: 6px; padding: 3px 8px;
     letter-spacing: 0.5px;
   }
-  .proof-badge.today {
-    background: var(--gold); color: var(--dark);
-  }
+  .proof-badge.today { background: var(--gold); color: var(--dark); }
 
-  /* ── ODDS SECTION ── */
+  /* ── ODDS ── */
   .odds-header {
     display: flex; align-items: center; justify-content: space-between;
     flex-wrap: wrap; gap: 12px; margin-bottom: 20px;
@@ -213,7 +221,6 @@
     border-radius: 10px; padding: 6px 16px;
     font-size: 13px; font-weight: 600;
   }
-
   .match-card {
     background: var(--white);
     border-radius: 18px;
@@ -225,12 +232,10 @@
     animation: slideUp 0.4s ease both;
   }
   .match-card:hover { border-color: var(--green-light); }
-
   @keyframes slideUp {
     from { opacity: 0; transform: translateY(16px); }
     to   { opacity: 1; transform: translateY(0); }
   }
-
   .match-top {
     padding: 16px 20px;
     display: flex; align-items: center; justify-content: space-between;
@@ -241,21 +246,14 @@
     color: var(--green-light); text-transform: uppercase; letter-spacing: 1px;
     display: flex; align-items: center; gap: 5px;
   }
-  .match-time {
-    font-size: 12px; color: var(--gray); font-weight: 500;
-  }
+  .match-time { font-size: 12px; color: var(--gray); font-weight: 500; }
   .match-teams {
     padding: 0 20px 16px;
     display: flex; align-items: center; justify-content: space-between;
     gap: 12px;
   }
-  .team {
-    flex: 1; text-align: center;
-  }
-  .team-name {
-    font-size: 16px; font-weight: 700; color: var(--text);
-    line-height: 1.2;
-  }
+  .team { flex: 1; text-align: center; }
+  .team-name { font-size: 16px; font-weight: 700; color: var(--text); line-height: 1.2; }
   .team-flag { font-size: 24px; margin-bottom: 4px; }
   .vs-badge {
     font-family: 'Bebas Neue', sans-serif;
@@ -271,9 +269,7 @@
     display: flex; align-items: center; justify-content: space-between;
     gap: 12px; flex-wrap: wrap;
   }
-  .odds-info {
-    display: flex; align-items: center; gap: 10px;
-  }
+  .odds-info { display: flex; align-items: center; gap: 10px; }
   .odds-label { font-size: 12px; color: var(--gray); font-weight: 500; }
   .odds-value {
     font-family: 'Bebas Neue', sans-serif;
@@ -286,8 +282,7 @@
     background: #fff3cd; border: 1.5px solid #ffc107;
     border-radius: 10px; padding: 7px 14px;
     font-size: 13px; font-weight: 700; color: #856404;
-    cursor: pointer;
-    transition: background 0.2s;
+    cursor: pointer; transition: background 0.2s;
   }
   .pick-locked:hover { background: #ffe69c; }
   .pick-unlocked {
@@ -297,13 +292,12 @@
     font-size: 13px; font-weight: 700;
   }
 
-  /* ── PAY NOW SECTION ── */
+  /* ── PAY SECTION ── */
   .pay-section {
     background: linear-gradient(135deg, var(--dark), #1a4d2a);
     color: white; border-radius: 24px;
     padding: 40px 30px; text-align: center;
-    margin: 0 20px 40px;
-    max-width: 1060px; margin-left: auto; margin-right: auto;
+    max-width: 1060px; margin: 0 auto 40px;
     box-shadow: var(--shadow-lg);
     position: relative; overflow: hidden;
   }
@@ -317,49 +311,32 @@
     font-size: 42px; letter-spacing: 3px; color: var(--gold);
     margin-bottom: 8px;
   }
-  .pay-section p {
-    font-size: 15px; color: rgba(255,255,255,0.7);
-    margin-bottom: 28px;
-  }
-  .pay-features {
-    display: flex; justify-content: center; gap: 24px;
-    flex-wrap: wrap; margin-bottom: 28px;
-  }
-  .pay-feature {
-    display: flex; align-items: center; gap: 6px;
-    font-size: 13px; color: rgba(255,255,255,0.8); font-weight: 500;
-  }
+  .pay-section p { font-size: 15px; color: rgba(255,255,255,0.7); margin-bottom: 28px; }
+  .pay-features  { display: flex; justify-content: center; gap: 24px; flex-wrap: wrap; margin-bottom: 28px; }
+  .pay-feature   { display: flex; align-items: center; gap: 6px; font-size: 13px; color: rgba(255,255,255,0.8); font-weight: 500; }
   .btn-pay {
     display: inline-flex; align-items: center; gap: 8px;
-    background: var(--gold);
-    color: var(--dark); font-family: 'Outfit', sans-serif;
-    font-size: 16px; font-weight: 800;
-    border: none; border-radius: 14px;
-    padding: 16px 40px; cursor: pointer;
+    background: var(--gold); color: var(--dark);
+    font-family: 'Outfit', sans-serif; font-size: 16px; font-weight: 800;
+    border: none; border-radius: 14px; padding: 16px 40px; cursor: pointer;
     box-shadow: 0 4px 20px rgba(240,180,41,0.4);
-    transition: transform 0.15s, box-shadow 0.15s;
-    letter-spacing: 0.5px;
+    transition: transform 0.15s, box-shadow 0.15s; letter-spacing: 0.5px;
   }
-  .btn-pay:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 30px rgba(240,180,41,0.5);
-  }
+  .btn-pay:hover  { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(240,180,41,0.5); }
   .btn-pay:active { transform: translateY(0); }
 
   /* ── MODAL ── */
   .modal-overlay {
     display: none; position: fixed; inset: 0;
     background: rgba(0,0,0,0.6); backdrop-filter: blur(4px);
-    z-index: 1000; align-items: center; justify-content: center;
-    padding: 20px;
+    z-index: 1000; align-items: center; justify-content: center; padding: 20px;
   }
   .modal-overlay.open { display: flex; }
   .modal {
     background: var(--white); border-radius: 24px;
     max-width: 480px; width: 100%;
     box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-    overflow: hidden;
-    animation: popIn 0.3s ease both;
+    overflow: hidden; animation: popIn 0.3s ease both;
   }
   @keyframes popIn {
     from { opacity: 0; transform: scale(0.9) translateY(20px); }
@@ -370,37 +347,26 @@
     color: white; padding: 24px 28px;
     display: flex; align-items: center; justify-content: space-between;
   }
-  .modal-header h3 {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 26px; letter-spacing: 2px; color: var(--gold);
-  }
+  .modal-header h3 { font-family: 'Bebas Neue', sans-serif; font-size: 26px; letter-spacing: 2px; color: var(--gold); }
   .modal-close {
-    background: rgba(255,255,255,0.1); border: none;
-    color: white; font-size: 18px;
-    width: 34px; height: 34px; border-radius: 50%;
-    cursor: pointer; display: flex; align-items: center; justify-content: center;
-    transition: background 0.2s;
+    background: rgba(255,255,255,0.1); border: none; color: white; font-size: 18px;
+    width: 34px; height: 34px; border-radius: 50%; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; transition: background 0.2s;
   }
   .modal-close:hover { background: rgba(255,255,255,0.2); }
   .modal-body { padding: 28px; }
-
-  .step-indicator {
-    display: flex; align-items: center; gap: 8px;
-    margin-bottom: 24px;
-  }
+  .step-indicator { display: flex; align-items: center; gap: 8px; margin-bottom: 24px; }
   .step-dot {
     width: 32px; height: 32px; border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
     font-size: 13px; font-weight: 700;
     background: var(--gray-light); color: var(--gray);
-    transition: all 0.3s;
-    flex-shrink: 0;
+    transition: all 0.3s; flex-shrink: 0;
   }
   .step-dot.active { background: var(--green); color: white; }
-  .step-dot.done { background: var(--green-glow); color: white; }
-  .step-line { flex: 1; height: 2px; background: var(--gray-light); }
-  .step-line.done { background: var(--green-glow); }
-
+  .step-dot.done   { background: var(--green-glow); color: white; }
+  .step-line       { flex: 1; height: 2px; background: var(--gray-light); }
+  .step-line.done  { background: var(--green-glow); }
   .form-group { margin-bottom: 18px; }
   .form-label {
     display: block; font-size: 13px; font-weight: 600;
@@ -412,62 +378,39 @@
     border: 2px solid var(--gray-light); border-radius: 12px;
     font-family: 'Outfit', sans-serif; font-size: 15px;
     color: var(--text); background: var(--white);
-    outline: none; transition: border-color 0.2s;
-    appearance: none;
+    outline: none; transition: border-color 0.2s; appearance: none;
   }
   .form-select:focus, .form-input:focus { border-color: var(--green); }
-
   .btn-next {
     width: 100%; padding: 14px;
     background: var(--green); color: white;
     border: none; border-radius: 12px;
-    font-family: 'Outfit', sans-serif;
-    font-size: 15px; font-weight: 700;
+    font-family: 'Outfit', sans-serif; font-size: 15px; font-weight: 700;
     cursor: pointer; transition: background 0.2s;
     display: flex; align-items: center; justify-content: center; gap: 6px;
   }
-  .btn-next:hover { background: var(--green-light); }
+  .btn-next:hover    { background: var(--green-light); }
   .btn-next:disabled { background: var(--gray); cursor: not-allowed; }
-
-  /* Waiting screen */
-  .waiting-screen {
-    text-align: center; padding: 10px 0;
-  }
+  .waiting-screen { text-align: center; padding: 10px 0; }
   .waiting-spinner {
     width: 64px; height: 64px; border-radius: 50%;
-    border: 4px solid var(--gray-light);
-    border-top-color: var(--green);
-    animation: spin 1s linear infinite;
-    margin: 0 auto 16px;
+    border: 4px solid var(--gray-light); border-top-color: var(--green);
+    animation: spin 1s linear infinite; margin: 0 auto 16px;
   }
   @keyframes spin { to { transform: rotate(360deg); } }
-  .waiting-screen h4 {
-    font-size: 18px; font-weight: 700; color: var(--text); margin-bottom: 6px;
-  }
-  .waiting-screen p { font-size: 14px; color: var(--gray); }
-
-  /* Payment details */
+  .waiting-screen h4 { font-size: 18px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+  .waiting-screen p  { font-size: 14px; color: var(--gray); }
   .payment-details-box {
-    background: var(--green-pale);
-    border: 2px solid var(--green-light);
-    border-radius: 14px; padding: 20px;
-    margin-bottom: 16px;
+    background: var(--green-pale); border: 2px solid var(--green-light);
+    border-radius: 14px; padding: 20px; margin-bottom: 16px;
   }
-  .payment-details-box h4 {
-    font-size: 16px; font-weight: 700; color: var(--green);
-    margin-bottom: 12px;
-  }
-  .payment-detail-row {
-    display: flex; justify-content: space-between;
-    font-size: 14px; margin-bottom: 6px;
-  }
+  .payment-details-box h4 { font-size: 16px; font-weight: 700; color: var(--green); margin-bottom: 12px; }
+  .payment-detail-row { display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 6px; }
   .payment-detail-row .key { color: var(--text-soft); font-weight: 500; }
   .payment-detail-row .val { font-weight: 700; color: var(--text); }
 
-  /* ── HISTORY TABLE ── */
-  .history-table {
-    width: 100%; border-collapse: collapse;
-  }
+  /* ── WIN HISTORY TABLE ── */
+  .history-table { width: 100%; border-collapse: collapse; }
   .history-table th {
     background: var(--green); color: white;
     font-size: 12px; font-weight: 600;
@@ -476,10 +419,7 @@
   }
   .history-table th:first-child { border-radius: 10px 0 0 0; }
   .history-table th:last-child  { border-radius: 0 10px 0 0; }
-  .history-table td {
-    padding: 12px 16px; font-size: 14px;
-    border-bottom: 1px solid var(--gray-light);
-  }
+  .history-table td { padding: 12px 16px; font-size: 14px; border-bottom: 1px solid var(--gray-light); }
   .history-table tr:hover td { background: var(--green-pale); }
   .win-badge {
     display: inline-flex; align-items: center; gap: 4px;
@@ -494,11 +434,7 @@
     text-align: center; padding: 24px 20px;
     font-size: 13px; margin-top: 40px;
   }
-  footer .footer-logo {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 22px; color: var(--gold);
-    letter-spacing: 2px; margin-bottom: 6px;
-  }
+  footer .footer-logo { font-family: 'Bebas Neue', sans-serif; font-size: 22px; color: var(--gold); letter-spacing: 2px; margin-bottom: 6px; }
 
   /* ── IMAGE MODAL ── */
   .img-modal-overlay {
@@ -507,10 +443,7 @@
     z-index: 2000; align-items: center; justify-content: center;
   }
   .img-modal-overlay.open { display: flex; }
-  .img-modal-overlay img {
-    max-width: 90vw; max-height: 90vh;
-    border-radius: 12px; box-shadow: 0 0 60px rgba(0,0,0,0.8);
-  }
+  .img-modal-overlay img  { max-width: 90vw; max-height: 90vh; border-radius: 12px; box-shadow: 0 0 60px rgba(0,0,0,0.8); }
   .img-modal-close {
     position: absolute; top: 20px; right: 20px;
     background: rgba(255,255,255,0.15); border: none;
@@ -553,20 +486,17 @@
   <h1>ODDS<span>KING</span><br>PRO</h1>
   <p>Professional football predictions • Verified wins • Daily tips</p>
   <div class="hero-stats">
-    <div class="hero-stat">
-      <div class="hero-stat-num" id="winRate">87%</div>
-      <div class="hero-stat-label">Win Rate</div>
-    </div>
-    <div class="hero-stat">
-      <div class="hero-stat-num" id="totalWins">1,240</div>
-      <div class="hero-stat-label">Total Wins</div>
-    </div>
-    <div class="hero-stat">
-      <div class="hero-stat-num" id="daysActive">365</div>
-      <div class="hero-stat-label">Days Active</div>
-    </div>
+    <div class="hero-stat"><div class="hero-stat-num">87%</div><div class="hero-stat-label">Win Rate</div></div>
+    <div class="hero-stat"><div class="hero-stat-num">1,240</div><div class="hero-stat-label">Total Wins</div></div>
+    <div class="hero-stat"><div class="hero-stat-num">365</div><div class="hero-stat-label">Days Active</div></div>
   </div>
 </section>
+
+<!-- NO ADMIN WARNING — shown only when visiting without a tipster link -->
+<div class="no-admin-banner" id="noAdminBanner">
+  <h3>⚠️ No tipster link detected</h3>
+  <p>You must access this page via a tipster's personal link to see today's tips and make a payment.</p>
+</div>
 
 <!-- PROOF OF WINS -->
 <div class="section">
@@ -592,7 +522,7 @@
 </div>
 
 <!-- PAY NOW SECTION -->
-<div class="pay-section">
+<div class="pay-section" id="paySection">
   <h2>🔓 UNLOCK ALL PICKS TODAY</h2>
   <p>Get instant access to all winning predictions — confirmed by our expert tipster</p>
   <div class="pay-features">
@@ -601,9 +531,7 @@
     <div class="pay-feature">⚡ Instant access</div>
     <div class="pay-feature">🌍 All countries</div>
   </div>
-  <button class="btn-pay" onclick="openPayModal()">
-    💳 PAY NOW — UNLOCK PICKS
-  </button>
+  <button class="btn-pay" onclick="openPayModal()">💳 PAY NOW — UNLOCK PICKS</button>
 </div>
 
 <!-- WIN HISTORY -->
@@ -614,11 +542,7 @@
     <table class="history-table">
       <thead>
         <tr>
-          <th>Date</th>
-          <th>Match</th>
-          <th>Pick</th>
-          <th>Odds</th>
-          <th>Result</th>
+          <th>Date</th><th>Match</th><th>Pick</th><th>Odds</th><th>Result</th>
         </tr>
       </thead>
       <tbody id="historyBody"></tbody>
@@ -640,9 +564,7 @@
       <h3>💳 UNLOCK PICKS</h3>
       <button class="modal-close" onclick="closePayModal()">✕</button>
     </div>
-    <div class="modal-body" id="modalBody">
-      <!-- Step content injected by JS -->
-    </div>
+    <div class="modal-body" id="modalBody"></div>
   </div>
 </div>
 
@@ -654,23 +576,38 @@
 
 <script>
 // ══════════════════════════════════════
-// DATE SETUP
+// SETUP
 // ══════════════════════════════════════
-const today = new Date();
-const fmt   = (d) => d.toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' });
-document.getElementById('matchDate').textContent = '📅 ' + fmt(today);
-
-// Get admin from URL
+const today        = new Date();
+const fmt          = (d) => d.toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' });
 const urlParams    = new URLSearchParams(window.location.search);
 const currentAdmin = urlParams.get('admin') || null;
 
+document.getElementById('matchDate').textContent = '📅 ' + fmt(today);
+
+// Show warning + hide pay button when no admin param in URL
+if (!currentAdmin) {
+  document.getElementById('noAdminBanner').style.display = 'block';
+  document.getElementById('paySection').style.display    = 'none';
+}
+
 // ══════════════════════════════════════
-// FETCH & RENDER PROOF IMAGES
+// PROOF IMAGES — only this admin's images
 // ══════════════════════════════════════
 async function loadProofImages() {
   const grid = document.getElementById('proofGrid');
+
+  if (!currentAdmin) {
+    grid.innerHTML = `
+      <div class="proof-card no-image">
+        <div class="proof-img-placeholder"><span class="icon">📷</span><span>No tipster selected</span></div>
+        <div class="proof-meta"><span class="proof-date">${fmt(today)}</span><span class="proof-badge">—</span></div>
+      </div>`;
+    return;
+  }
+
   try {
-    const res    = await fetch('/api/proof-images');
+    const res    = await fetch(`/api/proof-images?admin=${encodeURIComponent(currentAdmin)}`);
     const data   = await res.json();
     const images = data.images || [];
 
@@ -694,27 +631,16 @@ async function loadProofImages() {
       const d       = new Date(img.date);
       const isToday = d.toDateString() === today.toDateString();
       const hasUrl  = img.url && img.url.length > 0;
-
-      // Escape the URL safely for use in onclick and src attributes
       const safeUrl = hasUrl ? img.url.replace(/'/g, "\\'") : '';
-
       return `
         <div class="proof-card ${hasUrl ? '' : 'no-image'}" ${hasUrl ? `onclick="openImgModal('${safeUrl}')"` : ''}>
           ${hasUrl
-            ? `<img
-                 class="proof-img"
-                 src="${img.url}"
-                 alt="${img.caption || 'Win Proof'}"
-                 loading="lazy"
-                 onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+            ? `<img class="proof-img" src="${img.url}" alt="${img.caption || 'Win Proof'}" loading="lazy"
+                   onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                <div class="proof-img-placeholder" style="display:none;">
-                 <span class="icon">📷</span>
-                 <span>Image unavailable</span>
+                 <span class="icon">📷</span><span>Image unavailable</span>
                </div>`
-            : `<div class="proof-img-placeholder">
-                 <span class="icon">📷</span>
-                 <span>Loading...</span>
-               </div>`
+            : `<div class="proof-img-placeholder"><span class="icon">📷</span><span>Loading...</span></div>`
           }
           <div class="proof-meta">
             <span class="proof-date">${fmt(d)}</span>
@@ -722,19 +648,29 @@ async function loadProofImages() {
           </div>
         </div>`;
     }).join('');
-
-  } catch (e) {
+  } catch(e) {
     grid.innerHTML = `<p style="color:var(--gray);padding:20px">Could not load proof images.</p>`;
   }
 }
 
 // ══════════════════════════════════════
-// FETCH & RENDER TODAY'S ODDS
+// ODDS — only this admin's matches
 // ══════════════════════════════════════
 async function loadOdds() {
   const container = document.getElementById('matchesContainer');
+
+  if (!currentAdmin) {
+    container.innerHTML = `
+      <div style="text-align:center;padding:40px;color:var(--gray)">
+        <div style="font-size:48px;margin-bottom:12px">⚽</div>
+        <div style="font-size:16px;font-weight:600">No tipster selected</div>
+        <div style="font-size:13px;margin-top:6px">Access this page via your tipster's personal link.</div>
+      </div>`;
+    return;
+  }
+
   try {
-    const res  = await fetch('/api/odds');
+    const res  = await fetch(`/api/odds?admin=${encodeURIComponent(currentAdmin)}`);
     const data = await res.json();
     const odds = data.odds || [];
 
@@ -770,22 +706,28 @@ async function loadOdds() {
           }
         </div>
       </div>`).join('');
-  } catch (e) {
+  } catch(e) {
     container.innerHTML = `<p style="color:var(--gray);padding:20px">Could not load matches.</p>`;
   }
 }
 
-// Auto-refresh odds every 30 seconds (picks unlock live!)
+// Auto-refresh odds every 30 seconds so picks unlock live
 setInterval(loadOdds, 30000);
 
 // ══════════════════════════════════════
-// WIN HISTORY
+// WIN HISTORY — only this admin's wins
 // ══════════════════════════════════════
 async function loadWinHistory() {
   const tbody = document.getElementById('historyBody');
   if (!tbody) return;
+
+  if (!currentAdmin) {
+    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--gray)">No tipster selected.</td></tr>`;
+    return;
+  }
+
   try {
-    const res  = await fetch('/api/wins');
+    const res  = await fetch(`/api/wins?admin=${encodeURIComponent(currentAdmin)}`);
     const data = await res.json();
     const wins = data.wins || [];
 
@@ -796,10 +738,9 @@ async function loadWinHistory() {
 
     tbody.innerHTML = wins.map(w => {
       const isWin = w.result === 'WIN';
-      const d     = new Date(w.date);
       return `
         <tr>
-          <td style="font-weight:600;color:var(--text-soft)">${fmt(d)}</td>
+          <td style="font-weight:600;color:var(--text-soft)">${fmt(new Date(w.date))}</td>
           <td style="font-weight:600">${w.match}</td>
           <td>${w.pick}</td>
           <td><b style="color:var(--green)">${w.odds}</b></td>
@@ -810,7 +751,6 @@ async function loadWinHistory() {
         </tr>`;
     }).join('');
   } catch(e) {
-    console.error('loadWinHistory error:', e);
     tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--gray)">Could not load win history.</td></tr>`;
   }
 }
@@ -843,6 +783,7 @@ let payData      = {};
 let pollInterval = null;
 
 function openPayModal() {
+  if (!currentAdmin) return alert("Please access this page via your tipster's personal link.");
   currentStep = 1; payData = {};
   renderStep();
   document.getElementById('payModal').classList.add('open');
@@ -875,7 +816,6 @@ function renderStep() {
       </div>
       <button class="btn-next" onclick="step1Next()">Continue →</button>`;
   }
-
   else if (currentStep === 2) {
     const methods = paymentMethods[payData.country] || ['Bank Transfer'];
     body.innerHTML = stepsHtml + `
@@ -892,7 +832,6 @@ function renderStep() {
       </div>
       <button class="btn-next" onclick="step2Next()">Continue →</button>`;
   }
-
   else if (currentStep === 3) {
     body.innerHTML = stepsHtml + `
       <div class="payment-details-box">
@@ -907,7 +846,6 @@ function renderStep() {
       </p>
       <button class="btn-next" onclick="step3Confirm()">✅ Confirm & Send Request</button>`;
   }
-
   else if (currentStep === 4) {
     body.innerHTML = stepsHtml + `
       <div class="waiting-screen">
@@ -921,7 +859,6 @@ function renderStep() {
       </div>`;
     submitPaymentRequest();
   }
-
   else if (currentStep === 5) {
     body.innerHTML = stepsHtml + `
       <div class="payment-details-box">
@@ -949,15 +886,11 @@ function step2Next() {
   payData.method = method; payData.phone = phone;
   currentStep = 3; renderStep();
 }
-function step3Confirm() {
-  currentStep = 4; renderStep();
-}
+function step3Confirm() { currentStep = 4; renderStep(); }
 
 async function submitPaymentRequest() {
   const reqId = 'PAY-' + Date.now();
   payData.reqId = reqId;
-
-  // Show req ID immediately
   const el = document.getElementById('reqIdDisplay');
   if (el) el.textContent = reqId;
 
@@ -973,33 +906,24 @@ async function submitPaymentRequest() {
         adminId:   currentAdmin
       })
     });
-
     if (!res.ok) {
       const err = await res.json().catch(() => ({}));
-      console.error('Payment request failed:', err);
       showPayError(err.message || 'Server error. Please try again.');
       return;
     }
-
     const data = await res.json();
-    console.log('Payment request response:', data);
-
     if (data.success) {
-      const el2 = document.getElementById('reqIdDisplay');
-      if (el2) el2.textContent = reqId;
       startPolling(reqId);
     } else {
       showPayError(data.message || 'Failed to send request. Please try again.');
     }
-  } catch (e) {
-    console.error('Payment request error:', e);
+  } catch(e) {
     showPayError('Connection error. Please check your internet and try again.');
   }
 }
 
 function showPayError(msg) {
-  const body = document.getElementById('modalBody');
-  body.innerHTML = `
+  document.getElementById('modalBody').innerHTML = `
     <div style="text-align:center;padding:20px">
       <div style="font-size:48px;margin-bottom:12px">❌</div>
       <h4 style="color:var(--red);margin-bottom:8px">Request Failed</h4>
@@ -1012,31 +936,25 @@ function startPolling(reqId) {
   let attempts = 0;
   pollInterval = setInterval(async () => {
     attempts++;
-    // Update waiting dots animation
     const waitMsg = document.querySelector('.waiting-screen p');
     if (waitMsg) {
-      const dots = '.'.repeat((attempts % 3) + 1);
-      waitMsg.innerHTML = `Your request has been sent.<br>Admin will provide payment instructions${dots}`;
+      waitMsg.innerHTML = `Your request has been sent.<br>Admin will provide payment instructions${'.'.repeat((attempts % 3) + 1)}`;
     }
-
-    if (attempts > 120) { // 6 minutes max
+    if (attempts > 120) {
       clearInterval(pollInterval);
       const body = document.getElementById('modalBody');
       if (body) body.innerHTML += `<p style="color:var(--red);text-align:center;margin-top:12px;font-size:13px">⚠️ Taking longer than usual. Please contact support with ID: <b>${reqId}</b></p>`;
       return;
     }
-
     try {
       const res  = await fetch('/api/payment-status/' + reqId);
       const data = await res.json();
       if (data.status === 'ready' || data.status === 'declined') {
-        clearInterval(pollInterval);
-        pollInterval = null;
+        clearInterval(pollInterval); pollInterval = null;
         payData.instructions = data.instructions || 'Request declined. Please contact support.';
-        currentStep = 5;
-        renderStep();
+        currentStep = 5; renderStep();
       }
-    } catch (e) { /* keep polling */ }
+    } catch(e) { /* keep polling */ }
   }, 3000);
 }
 
@@ -1051,13 +969,12 @@ function closeImgModal() {
   document.getElementById('imgModal').classList.remove('open');
 }
 
-// Close modals on overlay click
 document.getElementById('payModal').addEventListener('click', function(e) {
   if (e.target === this) closePayModal();
 });
 
 // ══════════════════════════════════════
-// INIT — load everything on page load
+// BOOT
 // ══════════════════════════════════════
 window.addEventListener('DOMContentLoaded', () => {
   loadProofImages();
