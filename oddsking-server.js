@@ -5,7 +5,7 @@ const { MongoClient } = require('mongodb');
 require('dotenv').config();
 
 // ══════════════════════════════════════
-// DATABASE (inline — no separate file needed)
+// DATABASE
 // ══════════════════════════════════════
 let _db     = null;
 let _client = null;
@@ -101,30 +101,28 @@ async function clearWins() {
 // ══════════════════════════════════════
 // CONFIG
 // ══════════════════════════════════════
-const app       = express();
-const BOT_TOKEN = process.env.SUPER_ADMIN_BOT_TOKEN;
-const PORT      = process.env.PORT || 10000;
+const app         = express();
+const BOT_TOKEN   = process.env.SUPER_ADMIN_BOT_TOKEN;
+const PORT        = process.env.PORT || 10000;
 const WEBHOOK_URL = process.env.RENDER_EXTERNAL_URL || process.env.APP_URL || `http://localhost:${PORT}`;
 
 app.use(express.json());
 app.use(express.static(__dirname));
 
 console.log('\n=== ENV CHECK ===');
-console.log('BOT_TOKEN:   ', BOT_TOKEN        ? '✅ SET' : '❌ MISSING');
+console.log('BOT_TOKEN:   ', BOT_TOKEN             ? '✅ SET' : '❌ MISSING');
 console.log('MONGODB_URI: ', process.env.MONGODB_URI ? '✅ SET' : '❌ MISSING');
 console.log('WEBHOOK_URL: ', WEBHOOK_URL);
 console.log('=================\n');
 
 if (!BOT_TOKEN) { console.error('❌ SUPER_ADMIN_BOT_TOKEN missing!'); process.exit(1); }
 
-const bot = new TelegramBot(BOT_TOKEN);
-bot.on('error',         (e) => console.error('❌ Bot error:', e.message, e.stack));
-bot.on('polling_error', (e) => console.error('❌ Polling error:', e.message));
+// ── Create bot with NO polling and NO built-in webhook server ──
+// We handle all updates manually via Express so we have full control
+const bot = new TelegramBot(BOT_TOKEN, { polling: false });
 
-// Global handler — catch ALL unhandled promise rejections in bot handlers
-process.on('unhandledRejection', (reason, promise) => {
-    console.error('❌ Unhandled Rejection:', reason?.message || reason);
-});
+bot.on('error',         (e) => console.error('❌ Bot error:',    e.message));
+bot.on('webhook_error', (e) => console.error('❌ Webhook error:', e.message));
 
 // ══════════════════════════════════════
 // CACHE
@@ -168,24 +166,34 @@ async function loadAdminsFromDB() {
 }
 
 // ══════════════════════════════════════
-// WEBHOOK
+// WEBHOOK ROUTE
+// Must be registered BEFORE the dbReady middleware so Telegram can always
+// reach it — even during the brief startup window.
+// Always respond 200 immediately so Telegram never marks the webhook as failed.
 // ══════════════════════════════════════
 app.post('/telegram-webhook', (req, res) => {
+    res.sendStatus(200); // respond first, process after
     try {
         const update = req.body;
-        // Log what we receive
+        if (!update || typeof update !== 'object') return;
+
         if (update.message) {
             const text = update.message.text || '[no text]';
             const from = update.message.chat.id;
-            console.log(`📨 Message from ${from}: ${text.substring(0, 50)}`);
+            console.log(`📨 Message from chatId=${from}: "${text.substring(0, 80)}"`);
+        } else if (update.callback_query) {
+            console.log(`🔘 Callback from chatId=${update.callback_query.message?.chat?.id}: ${update.callback_query.data}`);
+        } else {
+            console.log(`📦 Update: ${Object.keys(update).filter(k => k !== 'update_id').join(', ')}`);
         }
+
         bot.processUpdate(update);
     } catch (e) {
-        console.error('processUpdate error:', e.message);
+        console.error('❌ processUpdate error:', e.message, e.stack);
     }
-    res.sendStatus(200);
 });
 
+// ── DB-ready gate — only blocks non-webhook routes ──
 app.use((req, res, next) => {
     if (!dbReady && !req.path.includes('/health') && !req.path.includes('/telegram-webhook')) {
         return res.status(503).json({ success: false, message: 'Server starting, please wait...' });
@@ -284,17 +292,14 @@ function setupCommandHandlers() {
         if (sp === -1) return bot.sendMessage(chatId, '❌ Use: /pay REQUEST_ID Instructions here');
         const reqId = input.substring(0, sp).trim();
         const instr = input.substring(sp + 1).trim();
-        console.log(`💳 /pay command: reqId=${reqId} instr=${instr} admin=${admin.adminId}`);
+        console.log(`💳 /pay command: reqId=${reqId} admin=${admin.adminId}`);
         try {
             const req = await getPaymentRequest(reqId);
-            console.log(`💳 Found request:`, req ? `adminId=${req.adminId} status=${req.status}` : 'NOT FOUND');
             if (!req) return bot.sendMessage(chatId, `❌ Request not found: \`${reqId}\`\n\nUse /pending to see your pending requests.`, { parse_mode: 'Markdown' });
-            // Allow super admin to pay any request
             if (req.adminId !== admin.adminId && admin.adminId !== 'ADMIN001') {
                 return bot.sendMessage(chatId, '❌ This request belongs to another admin!');
             }
             await updatePaymentRequest(reqId, { instructions: instr, status: 'instructed' });
-            console.log(`✅ Payment instructions saved for ${reqId}`);
             bot.sendMessage(chatId, `✅ *INSTRUCTIONS SENT!*\n\n🆔 \`${reqId}\`\n📋 ${instr}\n\n🌐 Customer sees this automatically!`, { parse_mode: 'Markdown' });
         } catch(e) {
             console.error('❌ /pay error:', e.message);
@@ -302,23 +307,17 @@ function setupCommandHandlers() {
         }
     });
 
-    // /addwin MATCH | PICK | ODDS | WIN or LOSS
     bot.onText(/\/addwin (.+)/, async (msg, match) => {
         const chatId = msg.chat.id; const admin = getAdminByChatId(chatId);
         if (!admin || !isAdminActive(chatId)) return bot.sendMessage(chatId, '❌ Not authorized.');
         const p = match[1].split('|').map(p2 => p2.trim());
-        if (p.length < 4) {
-            return bot.sendMessage(chatId,
-                '❌ Use:\n/addwin MATCH | PICK | ODDS | WIN or LOSS\n\nExample:\n/addwin Man Utd vs Chelsea | Man Utd Win | 2.10 | WIN'
-            );
-        }
+        if (p.length < 4) return bot.sendMessage(chatId, '❌ Use:\n/addwin MATCH | PICK | ODDS | WIN or LOSS\n\nExample:\n/addwin Man Utd vs Chelsea | Man Utd Win | 2.10 | WIN');
         const [match2, pick, odds, result] = p;
         const isWin = result.toUpperCase().includes('WIN');
         await saveWin({ match: match2, pick, odds, result: isWin ? 'WIN' : 'LOSS', date: new Date(), addedBy: admin.name });
         bot.sendMessage(chatId, `${isWin ? '✅' : '❌'} *WIN HISTORY UPDATED*\n\n⚽ ${match2}\n🎯 Pick: ${pick}\n📊 Odds: ${odds}\n${isWin ? '✅ WIN' : '❌ LOSS'}\n\n🌐 Live on website!`, { parse_mode: 'Markdown' });
     });
 
-    // /wins — list recent wins
     bot.onText(/\/wins/, async (msg) => {
         const chatId = msg.chat.id; const admin = getAdminByChatId(chatId);
         if (!admin || !isAdminActive(chatId)) return bot.sendMessage(chatId, '❌ Not authorized.');
@@ -331,7 +330,6 @@ function setupCommandHandlers() {
         bot.sendMessage(chatId, msg2, { parse_mode: 'Markdown' });
     });
 
-    // /deletelastwin — remove last win entry
     bot.onText(/\/deletelastwin/, async (msg) => {
         const chatId = msg.chat.id; const admin = getAdminByChatId(chatId);
         if (!admin || admin.adminId !== 'ADMIN001') return bot.sendMessage(chatId, '❌ Only super admin.');
@@ -340,7 +338,6 @@ function setupCommandHandlers() {
         bot.sendMessage(chatId, `🗑️ Deleted: ${deleted.match} — ${deleted.pick}`);
     });
 
-    // /clearwins — wipe all win history
     bot.onText(/\/clearwins/, async (msg) => {
         const chatId = msg.chat.id; const admin = getAdminByChatId(chatId);
         if (!admin || admin.adminId !== 'ADMIN001') return bot.sendMessage(chatId, '❌ Only super admin.');
@@ -348,27 +345,15 @@ function setupCommandHandlers() {
         bot.sendMessage(chatId, `🗑️ Cleared ${r.deletedCount} win history entries.`);
     });
 
-    // ── PHOTO HANDLER — saves file_id (permanent) instead of expiring URL ──
+    // ── PHOTO HANDLER — saves permanent file_id, NOT expiring URL ──
     bot.on('photo', async (msg) => {
         try {
             const chatId = msg.chat.id;
             const admin  = getAdminByChatId(chatId);
             if (!admin || !isAdminActive(chatId)) return;
-
-            // Save the permanent file_id — NOT the expiring URL
             const fileId = msg.photo[msg.photo.length - 1].file_id;
-
-            await saveProofImage({
-                fileId,
-                date:       new Date(),
-                caption:    msg.caption || 'Win Proof',
-                uploadedBy: admin.name
-            });
-
-            bot.sendMessage(chatId,
-                `✅ *PROOF UPLOADED!*\n📸 "${msg.caption || 'Win Proof'}"\n👤 By: ${admin.name}\n🌐 Live on website! 💾 Saved to DB!`,
-                { parse_mode: 'Markdown' }
-            );
+            await saveProofImage({ fileId, date: new Date(), caption: msg.caption || 'Win Proof', uploadedBy: admin.name });
+            bot.sendMessage(chatId, `✅ *PROOF UPLOADED!*\n📸 "${msg.caption||'Win Proof'}"\n👤 By: ${admin.name}\n🌐 Live on website! 💾 Saved to DB!`, { parse_mode: 'Markdown' });
         } catch(e) {
             console.error('photo handler error:', e.message);
             try { bot.sendMessage(msg.chat.id, `❌ Upload failed: ${e.message}`); } catch(_) {}
@@ -504,7 +489,12 @@ function setupCommandHandlers() {
 // ══════════════════════════════════════
 app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'oddsking-pro.html')));
 
-app.get('/health', (req, res) => res.json({ status:'ok', db: dbReady?'connected':'not ready', admins: adminCache.size, timestamp: new Date().toISOString() }));
+app.get('/health', (req, res) => res.json({
+    status: 'ok',
+    db: dbReady ? 'connected' : 'not ready',
+    admins: adminCache.size,
+    timestamp: new Date().toISOString()
+}));
 
 app.get('/api/validate-admin/:adminId', (req, res) => {
     const a = adminCache.get(req.params.adminId);
@@ -527,29 +517,24 @@ app.get('/api/wins', async (req, res) => {
     } catch(e) { res.json({ wins: [] }); }
 });
 
-// ── PROOF IMAGES — resolves permanent file_id to fresh URL on every request ──
+// ── PROOF IMAGES — resolves permanent file_id to a fresh URL on each request ──
 app.get('/api/proof-images', async (req, res) => {
     try {
         const images = await getProofImages(30);
-
         const resolved = await Promise.all(
             images.map(async (img) => {
-                // New uploads: use fileId to get a fresh, non-expired URL
                 if (img.fileId) {
                     try {
                         const freshUrl = await bot.getFileLink(img.fileId);
                         return { ...img, url: freshUrl };
                     } catch (e) {
-                        console.error('⚠️ Could not get file link for fileId:', img.fileId, e.message);
-                        return { ...img, url: null }; // frontend will show placeholder
+                        console.error('⚠️ Could not resolve fileId:', img.fileId, e.message);
+                        return { ...img, url: null };
                     }
                 }
-                // Legacy uploads that were saved with a direct url field — return as-is
-                // (they may still be expired, but we can't do better without the fileId)
-                return img;
+                return img; // legacy: already has url field
             })
         );
-
         res.json({ images: resolved });
     } catch(e) {
         console.error('❌ /api/proof-images error:', e.message);
@@ -561,9 +546,7 @@ app.post('/api/payment-request', async (req, res) => {
     try {
         const { requestId, country, method, phone, adminId: reqAdminId } = req.body;
         console.log('💰 Payment request:', { requestId, country, method, phone, reqAdminId });
-        console.log('👥 Admins in cache:', adminCache.size, Array.from(adminCache.keys()));
 
-        // Find target admin
         let targetAdmin = null;
         if (reqAdminId && adminCache.has(reqAdminId) && !pausedAdmins.has(reqAdminId)) {
             targetAdmin = adminCache.get(reqAdminId);
@@ -574,11 +557,9 @@ app.post('/api/payment-request', async (req, res) => {
         }
 
         if (!targetAdmin) {
-            console.error('❌ No admin available! Cache:', adminCache.size);
+            console.error('❌ No admin available! Cache size:', adminCache.size);
             return res.status(503).json({ success:false, message:'No admin available. Please try again.' });
         }
-
-        console.log('✅ Assigned to:', targetAdmin.name, 'chatId:', targetAdmin.chatId);
 
         await savePaymentRequest({ requestId, adminId:targetAdmin.adminId, country, method, phone, status:'pending', instructions:null, createdAt:new Date().toISOString() });
 
@@ -602,7 +583,7 @@ Example:
             reply_markup: { inline_keyboard: [[{ text:'❌ Decline', callback_data:`decline_${requestId}` }]] }
         });
 
-        console.log('✅ Telegram notification sent!');
+        console.log('✅ Telegram notification sent to', targetAdmin.name);
         res.json({ success:true, requestId, assignedTo:targetAdmin.name });
     } catch(err) {
         console.error('❌ Payment request error:', err.message);
@@ -646,51 +627,57 @@ async function start() {
 
     setupCommandHandlers();
 
+    // Start HTTP server first so Telegram can reach us immediately
     await new Promise((resolve, reject) => {
-        app.listen(PORT, '0.0.0.0', () => { console.log(`✅ Server on port ${PORT}`); resolve(); }).on('error', reject);
+        app.listen(PORT, '0.0.0.0', () => {
+            console.log(`✅ Server on port ${PORT}`);
+            resolve();
+        }).on('error', reject);
     });
 
+    // ── Register webhook ──
+    // Do NOT call deleteWebHook first — that creates a window where Telegram
+    // has no URL and buffers/drops messages sent during the deploy gap.
+    // Just call setWebHook; Telegram overwrites any existing URL atomically.
+    const webhookUrl = `${WEBHOOK_URL}/telegram-webhook`;
     try {
-        await bot.deleteWebHook();
-        await new Promise(r => setTimeout(r, 1000));
-        const wu = `${WEBHOOK_URL}/telegram-webhook`;
-        await bot.setWebHook(wu, { drop_pending_updates:true, max_connections:40, allowed_updates:['message','callback_query'] });
+        await bot.setWebHook(webhookUrl, {
+            drop_pending_updates: false,  // ← keep commands sent during restart
+            max_connections:      40,
+            allowed_updates:      ['message', 'callback_query']
+        });
         const info = await bot.getWebHookInfo();
         const me   = await bot.getMe();
         console.log(`✅ Webhook: ${info.url}`);
+        console.log(`✅ Pending updates in queue: ${info.pending_update_count}`);
         console.log(`✅ Bot: @${me.username}`);
         console.log(`\n👑 ODDSKING PRO READY! Admins: ${adminCache.size}\n`);
     } catch(e) {
-        console.error('❌ Webhook error:', e.message);
+        console.error('❌ Webhook setup error:', e.message);
     }
 
+    // ── Keep-alive pings (prevent Render free tier sleep) ──
     setInterval(() => {
         fetch(`${WEBHOOK_URL}/health`).catch(()=>{});
         console.log(`💓 Alive | Admins: ${adminCache.size}`);
     }, 14 * 60 * 1000);
 
-    // Self-ping every 5 minutes to prevent Render free tier sleep
     setInterval(async () => {
-        try {
-            await fetch(`${WEBHOOK_URL}/health`).catch(()=>{});
-        } catch(e) {}
+        try { await fetch(`${WEBHOOK_URL}/health`).catch(()=>{}); } catch(e) {}
     }, 5 * 60 * 1000);
 
-    // Webhook health log every 10 minutes (no auto-reset to avoid conflicts)
-    const expectedWebhook = `${WEBHOOK_URL}/telegram-webhook`;
+    // ── Webhook health monitor — restore if lost ──
     setInterval(async () => {
         try {
             const info = await bot.getWebHookInfo();
-            const ok = info.url === expectedWebhook;
-            console.log(`🔍 Webhook: ${ok ? '✅ OK' : '❌ LOST'} | Pending: ${info.pending_update_count || 0}`);
+            const ok   = info.url === webhookUrl;
+            console.log(`🔍 Webhook: ${ok ? '✅ OK' : '❌ LOST'} | Pending: ${info.pending_update_count || 0} | Last error: ${info.last_error_message || 'none'}`);
             if (!ok) {
                 console.log('⚠️ Webhook lost — restoring...');
-                await bot.deleteWebHook();
-                await new Promise(r => setTimeout(r, 1000));
-                await bot.setWebHook(expectedWebhook, {
+                await bot.setWebHook(webhookUrl, {
                     drop_pending_updates: false,
-                    max_connections: 40,
-                    allowed_updates: ['message', 'callback_query']
+                    max_connections:      40,
+                    allowed_updates:      ['message', 'callback_query']
                 });
                 console.log('✅ Webhook restored!');
             }
@@ -700,17 +687,20 @@ async function start() {
 
 start().catch(e => { console.error('❌ Fatal:', e.message); process.exit(1); });
 
+// ── Graceful shutdown ──
+// IMPORTANT: Do NOT call bot.deleteWebHook() here.
+// On Render, SIGTERM fires on the OLD instance while the NEW one is starting.
+// Deleting the webhook kills the new instance's connection before it can
+// register its own. The new instance will overwrite the URL on startup.
 process.on('SIGTERM', async () => {
-    console.log('SIGTERM received, shutting down...');
-    await bot.deleteWebHook().catch(()=>{});
+    console.log('SIGTERM — shutting down (webhook preserved for new instance)');
     await closeDatabase().catch(()=>{});
     process.exit(0);
 });
-process.on('unhandledRejection', (reason, promise) => {
+
+process.on('unhandledRejection', (reason) => {
     console.error('❌ UnhandledRejection:', reason?.message || reason);
-    // Don't crash - just log
 });
 process.on('uncaughtException', (e) => {
     console.error('❌ UncaughtException:', e.message, e.stack);
-    // Don't crash - just log
 });
