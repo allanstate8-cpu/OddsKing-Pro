@@ -348,13 +348,27 @@ function setupCommandHandlers() {
         bot.sendMessage(chatId, `🗑️ Cleared ${r.deletedCount} win history entries.`);
     });
 
+    // ── PHOTO HANDLER — saves file_id (permanent) instead of expiring URL ──
     bot.on('photo', async (msg) => {
         try {
-            const chatId = msg.chat.id; const admin = getAdminByChatId(chatId);
+            const chatId = msg.chat.id;
+            const admin  = getAdminByChatId(chatId);
             if (!admin || !isAdminActive(chatId)) return;
-            const url = await bot.getFileLink(msg.photo[msg.photo.length-1].file_id);
-            await saveProofImage({ url, date: new Date(), caption: msg.caption || 'Win Proof', uploadedBy: admin.name });
-            bot.sendMessage(chatId, `✅ *PROOF UPLOADED!*\n📸 "${msg.caption||'Win Proof'}"\n👤 By: ${admin.name}\n🌐 Live on website! 💾 Saved to DB!`, { parse_mode: 'Markdown' });
+
+            // Save the permanent file_id — NOT the expiring URL
+            const fileId = msg.photo[msg.photo.length - 1].file_id;
+
+            await saveProofImage({
+                fileId,
+                date:       new Date(),
+                caption:    msg.caption || 'Win Proof',
+                uploadedBy: admin.name
+            });
+
+            bot.sendMessage(chatId,
+                `✅ *PROOF UPLOADED!*\n📸 "${msg.caption || 'Win Proof'}"\n👤 By: ${admin.name}\n🌐 Live on website! 💾 Saved to DB!`,
+                { parse_mode: 'Markdown' }
+            );
         } catch(e) {
             console.error('photo handler error:', e.message);
             try { bot.sendMessage(msg.chat.id, `❌ Upload failed: ${e.message}`); } catch(_) {}
@@ -392,7 +406,7 @@ function setupCommandHandlers() {
         bot.sendMessage(newChatId, `🎉 *YOU ARE NOW AN ADMIN!*\n\nWelcome ${name}!\n*ID:* \`${newAdminId}\`\n*Link:* ${WEBHOOK_URL}?admin=${newAdminId}\n\n/mylink /stats /pending /myinfo`, { parse_mode: 'Markdown' }).catch(() => bot.sendMessage(chatId, '⚠️ Admin saved but could not notify them — they need to /start first.'));
     });
 
-        bot.onText(/\/addadmin$/, (msg) => {
+    bot.onText(/\/addadmin$/, (msg) => {
         const chatId = msg.chat.id; const admin = getAdminByChatId(chatId);
         if (!admin || admin.adminId !== 'ADMIN001') return;
         bot.sendMessage(chatId, '📝 Use:\n/addadmin NAME|EMAIL|CHATID\n\nExample:\n/addadmin John|john@email.com|123456789');
@@ -513,11 +527,34 @@ app.get('/api/wins', async (req, res) => {
     } catch(e) { res.json({ wins: [] }); }
 });
 
+// ── PROOF IMAGES — resolves permanent file_id to fresh URL on every request ──
 app.get('/api/proof-images', async (req, res) => {
     try {
         const images = await getProofImages(30);
-        res.json({ images });
-    } catch(e) { res.json({ images: [] }); }
+
+        const resolved = await Promise.all(
+            images.map(async (img) => {
+                // New uploads: use fileId to get a fresh, non-expired URL
+                if (img.fileId) {
+                    try {
+                        const freshUrl = await bot.getFileLink(img.fileId);
+                        return { ...img, url: freshUrl };
+                    } catch (e) {
+                        console.error('⚠️ Could not get file link for fileId:', img.fileId, e.message);
+                        return { ...img, url: null }; // frontend will show placeholder
+                    }
+                }
+                // Legacy uploads that were saved with a direct url field — return as-is
+                // (they may still be expired, but we can't do better without the fileId)
+                return img;
+            })
+        );
+
+        res.json({ images: resolved });
+    } catch(e) {
+        console.error('❌ /api/proof-images error:', e.message);
+        res.json({ images: [] });
+    }
 });
 
 app.post('/api/payment-request', async (req, res) => {
@@ -633,7 +670,6 @@ async function start() {
     }, 14 * 60 * 1000);
 
     // Self-ping every 5 minutes to prevent Render free tier sleep
-    const expectedWebhook = `${WEBHOOK_URL}/telegram-webhook`;
     setInterval(async () => {
         try {
             await fetch(`${WEBHOOK_URL}/health`).catch(()=>{});
@@ -641,6 +677,7 @@ async function start() {
     }, 5 * 60 * 1000);
 
     // Webhook health log every 10 minutes (no auto-reset to avoid conflicts)
+    const expectedWebhook = `${WEBHOOK_URL}/telegram-webhook`;
     setInterval(async () => {
         try {
             const info = await bot.getWebHookInfo();
